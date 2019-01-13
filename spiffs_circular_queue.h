@@ -6,6 +6,10 @@
 
 #include <Arduino.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* 
  *	Initializes the library and sets current front and back queue indices (useful for ESP32 MCU)
  *	
@@ -72,5 +76,9 @@ uint16_t spiffs_circular_queue_get_back_indx(void);
  *	@return					1 when empty and 0 if not
  */
 uint8_t	spiffs_circular_queue_free(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __SPIFFS_CIRCULAR_QUEUE_MANAGER__H__
