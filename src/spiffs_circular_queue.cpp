@@ -7,33 +7,28 @@
 #include "spiffs_circular_queue.h"
 #include "sys/stat.h"
 
-const char send_queue_filename[] = "/spiffs/send_queue.data"; ///< Path to store the queue data in SPIFFS
-
-static uint16_t _front = 0; ///< Queue front index
-static uint16_t _back = 0;  ///< Queue back index
-static uint16_t _size = 0;  ///< Queue size
-static FILE     * _fd;      ///< Pointer to file in SPIFFS
+#define SPIFFS_CIRCULAR_QUEUE_HEAD_FRONT    (0)
+#define SPIFFS_CIRCULAR_QUEUE_HEAD_BACK     (sizeof(uint16_t))
 
 /// private function to mount SPIFFS during initialization
 uint8_t _mount_spiffs(void);
 /// private function to unmount SPIFFS when you don't need it, i.e. before going in a sleep mode
 void    _unmount_spiffs(void);
 
-uint8_t spiffs_circular_queue_init(uint16_t front, uint16_t back) {
-    uint8_t ret = 0;
+uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spiffs = 1) {
+    uint8_t ret = 1;
 
-    if (_mount_spiffs()) {
-        _back = back;
-        _front = front;
-        _size = (_back >= _front? (_back - _front) : (SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - _front + _back));
+    if (mount_spiffs && !_mount_spiffs()) ret = 0;
 
+    if (ret) {
         struct stat sb;
 
-        if (stat(send_queue_filename, &sb)) {
-            if ((_fd = fopen(send_queue_filename, "w"))) {
-                fclose(_fd);
-
-                ret = 1;
+        // stat returns 0 upon succes (file exists) and -1 on failure (does not)
+        if (stat(cq->fn, &sb) < 0) {
+            if ((cq->fd = fopen(cq->fn, "w"))) {
+                fclose(cq->fd);
+            } else {
+                ret = 0;
             }
         }
     }
@@ -88,8 +83,8 @@ uint8_t spiffs_circular_queue_is_empty() {
     return !_size && (_front == _back);
 }
 
-uint16_t spiffs_circular_queue_size() {
-    return _size;
+uint16_t spiffs_circular_queue_size(circular_queue_t *cq) {
+    return (cq->back >= cq->front? (cq->back - cq->front) : (SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - cq->front + cq->back));
 }
 
 uint16_t spiffs_circular_queue_get_front_ptr() {

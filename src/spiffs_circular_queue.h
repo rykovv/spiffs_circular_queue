@@ -7,10 +7,18 @@
 #ifndef __SPIFFS_CIRCULAR_QUEUE_MANAGER__H__
 #define __SPIFFS_CIRCULAR_QUEUE_MANAGER__H__
 
-#define SPIFFS_CIRCULAR_QUEUE_MAX_SIZE            (256)
+#define SPIFFS_CIRCULAR_QUEUE_MAX_SIZE            (1024) ///< Maximum file size for storing data, in bytes  
 #define SPIFFS_CIRCULAR_QUEUE_ITEM_SIZE           (256)
+#define SPIFFS_FILE_NAME_MAX_SIZE                 (32)   ///< SPIFFS maximum allowable file name length
 
 #include <Arduino.h>
+
+typedef struct {
+    char fn[SPIFFS_FILE_NAME_MAX_SIZE] = 'spiffs/data'; ///< Path to store the queue data in SPIFFS
+    uint16_t _front = 0;                                ///< Queue front index
+    uint16_t _back = 0;                                 ///< Queue back index
+    FILE     *fd = NULL;                                ///< Pointer to file in SPIFFS
+} circular_queue_t;
 
 #ifdef __cplusplus
 extern "C" {
