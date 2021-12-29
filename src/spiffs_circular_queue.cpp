@@ -8,12 +8,14 @@
 #include "sys/stat.h"
 
 #define SPIFFS_CIRCULAR_QUEUE_HEAD_FRONT    (0)
-#define SPIFFS_CIRCULAR_QUEUE_HEAD_BACK     (sizeof(uint16_t))
+#define SPIFFS_CIRCULAR_QUEUE_HEAD_BACK     (sizeof(uint32_t))
+#define SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET   (sizeof(uint32_t)*2)
 
 /// private function to mount SPIFFS during initialization
 uint8_t _mount_spiffs(void);
 /// private function to unmount SPIFFS when you don't need it, i.e. before going in a sleep mode
 void    _unmount_spiffs(void);
+void    _write_medium(circular_queue_t *cq, void *data, uint32_t data_size);
 
 uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spiffs = 1) {
     uint8_t ret = 1;
@@ -22,11 +24,31 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spi
 
     if (ret) {
         struct stat sb;
+        FILE *fd = NULL;
 
         // stat returns 0 upon succes (file exists) and -1 on failure (does not)
         if (stat(cq->fn, &sb) < 0) {
-            if ((cq->fd = fopen(cq->fn, "w"))) {
-                fclose(cq->fd);
+            if ((fd = fopen(cq->fn, "w"))) {
+                cq->front = 0;
+                cq->back = 0;
+                
+                // set front and back indices in the file's head
+                uint8_t nwritten = fwrite(&(cq->front), 1, sizeof(cq->front), fd);
+                nwritten += fwrite(&(cq->back), 1, sizeof(cq->back), fd);
+                if (nwritten != SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET) ret = 0;
+                
+                fclose(fd);
+            } else {
+                ret = 0;
+            }
+        } else {
+            if ((fd = fopen(cq->fn, "r+b"))) {
+                // read front and back indices from the file's head
+                uint8_t nread = fread(&(cq->front), 1, sizeof(cq->front), fd);
+                nread += fread(&(cq->back), 1, sizeof(cq->back), fd);
+                if (nread != SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET) ret = 0;
+
+                fclose(fd);
             } else {
                 ret = 0;
             }
@@ -121,4 +143,9 @@ uint8_t _mount_spiffs(void) {
 
 void _unmount_spiffs(void) {
     esp_vfs_spiffs_unregister(NULL);
+}
+
+void _write_medium(circular_queue_t *cq, void *data, uint32_t data_size) {
+    // spiffs medium
+    
 }
