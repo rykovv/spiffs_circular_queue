@@ -16,7 +16,7 @@ uint8_t  _mount_spiffs(void);
 /// private function to unmount SPIFFS when you don't need it, i.e. before going in a sleep mode
 void     _unmount_spiffs(void);
 uint32_t _write_medium(circular_queue_t *cq, void *data, uint32_t data_size);
-uint32_t _read_medium(circular_queue_t *cq, void *data, uint32_t *data_size);
+uint8_t _read_medium(circular_queue_t *cq, void *data, uint32_t *data_size);
 
 uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spiffs = 1) {
     uint8_t ret = 1;
@@ -152,7 +152,7 @@ uint32_t _write_medium(circular_queue_t *cq, void *data, uint32_t data_size) {
 }
 
 // data_size must not be null
-uint32_t _read_medium(circular_queue_t *cq, void *data, uint32_t *data_size) {
+uint8_t _read_medium(circular_queue_t *cq, void *data, uint32_t *data_size) {
     // spiffs medium
     FILE *fd = NULL;
     uint32_t nread = 0;
@@ -164,13 +164,12 @@ uint32_t _read_medium(circular_queue_t *cq, void *data, uint32_t *data_size) {
         if (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front + sizeof(uint32_t) > SPIFFS_CIRCULAR_QUEUE_MAX_SIZE) {
             // TODO: test!!
             uint8_t buf[sizeof(uint32_t)];
-            // for little endian
             // read first half
-            fread(buf, 1, SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front), fd);
+            nread = fread(buf, 1, SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front), fd);
             // set seek to the first usable byte
             fseek(fd, SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET, SEEK_SET);
             // read the rest of size
-            fread(&buf[SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front)], 1, 
+            nread += fread(&buf[SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front)], 1, 
                 sizeof(uint32_t) - SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front), fd);
             // transform read by bytes data_size into uint32_t
             memcpy(data_size, buf, sizeof(data_size));
@@ -179,9 +178,19 @@ uint32_t _read_medium(circular_queue_t *cq, void *data, uint32_t *data_size) {
         }
 
         // case 2: splitted elem data
+        if (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front + *data_size > SPIFFS_CIRCULAR_QUEUE_MAX_SIZE) {
+            nread += fread(data, 1, SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front), fd);
+            // set seek to the first usable byte
+            fseek(fd, SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET, SEEK_SET);
+            // read the rest of data
+            nread += fread(&data[SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front)], 1, 
+                *data_size - SPIFFS_CIRCULAR_QUEUE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front), fd);
+        } else { // normal read
+            nread += fread(data, 1, *data_size, fd);
+        }
 
-        ret = SPIFFS_CIRCULAR_QUEUE_ITEM_SIZE == fread(elem, 1, SPIFFS_CIRCULAR_QUEUE_ITEM_SIZE, _fd);
-
-        fclose(_fd);
+        fclose(fd);
     }
+
+    return nread == (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + *data_size);
 }
