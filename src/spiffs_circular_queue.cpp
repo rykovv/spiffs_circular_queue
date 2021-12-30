@@ -15,7 +15,9 @@
 uint8_t  _mount_spiffs(void);
 /// private function to unmount SPIFFS when you don't need it, i.e. before going in a sleep mode
 void     _unmount_spiffs(void);
+/// private function that adds write medium-independent abstraction
 uint8_t _write_medium(const circular_queue_t *cq, const void *data, const uint32_t data_size);
+/// private function that adds read medium-independent abstraction. size_only to read only the size of last elem
 uint8_t _read_medium(const circular_queue_t *cq, void *data, uint32_t *data_size, const uint8_t size_only = 0);
 
 uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spiffs = 1) {
