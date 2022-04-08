@@ -7,14 +7,15 @@
 #ifndef __SPIFFS_CIRCULAR_QUEUE__H__
 #define __SPIFFS_CIRCULAR_QUEUE__H__
 
-#define SPIFFS_CIRCULAR_QUEUE_MAX_SIZE            (4096) ///< Maximum file size for storing data, in bytes. Set your limit
+#define SPIFFS_MAX_FILES_COUNT                    (3)    ///< Maximum file count in SPIFFS
+#define SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE       (4096) ///< Maximum file size for storing data, in bytes. Set your limit
 #define SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE       (256)  ///< Queue elem size upper limit.
 #define SPIFFS_FILE_NAME_MAX_SIZE                 (32)   ///< SPIFFS maximum allowable file name length
 
 #include <Arduino.h>
 
 typedef struct {
-    char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS
+    char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS.
     uint32_t front = 0;                 ///< Queue front byte index
     uint32_t back = 0;                  ///< Queue back byte index
 } circular_queue_t;
@@ -58,8 +59,10 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t *elem,
  *	Pops out the first element of the queue.
  *
  *  @param[in] cq 			Pointer to the circular_queue_t struct
+ * 
+ *	@return					1 on success and 0 on fail
  */
-void spiffs_circular_queue_dequeue(circular_queue_t *cq);
+uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq);
 
 /**
  *	Checks whether the queue is empty or not.
@@ -100,11 +103,12 @@ uint16_t spiffs_circular_queue_get_back_indx(const circular_queue_t *cq);
 /**
  *	Frees resourses allocated for the queue and closes the SPIFFS.
  *
- *	@param[in] cq 			Pointer to the circular_queue_t struct
+ *	@param[in] cq 			    Pointer to the circular_queue_t struct
+ *	@param[in] unmount_spiffs   Unmount SPIFFS on free flag
  *
  *	@return					1 when empty and 0 if not
  */
-uint8_t	spiffs_circular_queue_free(const circular_queue_t *cq);
+uint8_t	spiffs_circular_queue_free(circular_queue_t *cq, const uint8_t unmount_spiffs = 1);
 
 #ifdef __cplusplus
 }
