@@ -7,8 +7,8 @@
 #ifndef __SPIFFS_CIRCULAR_QUEUE__H__
 #define __SPIFFS_CIRCULAR_QUEUE__H__
 
-#define SPIFFS_MAX_FILES_COUNT                    (3)    ///< Maximum file count in SPIFFS
-#define SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE       (4096) ///< Maximum file size for storing data, in bytes. Set your limit
+#define SPIFFS_MAX_FILES_COUNT                    (3)    ///< Maximum queue files that could open at the same time.
+#define SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE       (32)   ///< Maximum file size for storing data, in bytes. Set your limit
 #define SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE       (256)  ///< Queue elem size upper limit.
 #define SPIFFS_FILE_NAME_MAX_SIZE                 (32)   ///< SPIFFS maximum allowable file name length
 
