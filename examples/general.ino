@@ -1,12 +1,7 @@
 #include <Arduino.h>
 #include "spiffs_circular_queue.h"
 
-struct _cqueue {
-    uint16_t send_queue_front = 0;
-    uint16_t send_queue_back  = 0;
-} cqueue_t;
-
-cqueue_t cq;
+circular_queue_t cq;
 
 void make_data(void);
 void send_data(void);
@@ -14,7 +9,8 @@ void send_data(void);
 void setup() {
     // load cq from EEPROM or other external source
     // ..
-    spiffs_circular_queue_init(cq.send_queue_front, cq.send_queue_back);
+    snprintf(cq.fn, SPIFFS_FILE_NAME_MAX_SIZE, "spiffs/data");
+    spiffs_circular_queue_init(&cq);
 }
 
 void loop() {
@@ -30,23 +26,24 @@ void loop() {
 }
 
 void make_data(void) {
-    uint8_t buf[SPIFFS_CIRCULAR_QUEUE_ITEM_SIZE];
+    uint8_t buf[SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE];
     // ...
     // read data from sensors, generate network packets, etc
     // ...
-    spiffs_circular_queue_enqueue(buf);
+    spiffs_circular_queue_enqueue(&cq, buf, SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE);
 }
 
 void send_data(void) {
-    uint8_t buf[SPIFFS_CIRCULAR_QUEUE_ITEM_SIZE];
+    uint8_t buf[SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE];
+    uint32_t buf_size;
     // ...
     // prepare everything for sending data
     // ...
-    if (!spiffs_circular_queue_is_empty()) {
-        while (spiffs_circular_queue_size() > 0) {
-            spiffs_circular_queue_front(buf);
+    if (!spiffs_circular_queue_is_empty(&cq)) {
+        while (spiffs_circular_queue_size(&cq) > 0) {
+            spiffs_circular_queue_front(&cq, buf, &buf_size);
             // send buf and pop the queue
-            spiffs_circular_queue_dequeue();
+            spiffs_circular_queue_dequeue(&cq);
         }
     }
 }
