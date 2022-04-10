@@ -101,7 +101,7 @@ uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t * elem, 
 uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t * elem, const uint32_t elem_size) {
     uint8_t ret = 0;
 
-    if (elem_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE &&
+    if (elem_size > 0 && elem_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE &&
         spiffs_circular_queue_available_space(cq) >= elem_size) 
     {
         if (_write_medium(cq, elem, elem_size)) {
@@ -240,19 +240,25 @@ uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uin
             // TODO: test!!
             uint8_t buf[sizeof(uint32_t)];
             // transform data_size into byte array
-            memcpy(buf, &data_size, sizeof(uint32_t));
+            //memcpy(buf, &data_size, sizeof(uint32_t));
+            buf[0] = data_size & 0xFF;
+            buf[1] = (data_size >> 8) & 0xFF;
+            buf[2] = (data_size >> 16) & 0xFF;
+            buf[3] = data_size >> 24;
             // write first part of data_size
             nwritten = fwrite(buf, 1, SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back), fd);
             // set seek to the first usable byte
             fseek(fd, SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET, SEEK_SET);
             // write the rest of data_size
+            printf("before second write\n");
             nwritten += fwrite(&buf[SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back)], 1, 
                 sizeof(uint32_t) - SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back), fd);
+            printf("after second write\n");
         } else { // normal write
             nwritten = fwrite(&data_size, 1, sizeof(uint32_t), fd);
         }
         printf("_write_medium written %d bytes after elem size\n", nwritten);
-
+        delay(1000);
         // case 2: split elem data
         if (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front + data_size > SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE) {
             nwritten += fwrite(data, 1, SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back), fd);
