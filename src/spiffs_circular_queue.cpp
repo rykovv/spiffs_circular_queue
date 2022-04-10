@@ -11,9 +11,11 @@
 #include "esp_spiffs.h"
 #endif
 
-#define SPIFFS_CIRCULAR_QUEUE_HEAD_FRONT    (0)                     ///< Front index location file offset in bytes
-#define SPIFFS_CIRCULAR_QUEUE_HEAD_BACK     (sizeof(uint32_t))      ///< Back index location file offset in bytes
-#define SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET   (sizeof(uint32_t)*2)    ///< Data location file offset in bytes
+#define SPIFFS_CIRCULAR_QUEUE_HEAD_FRONT    (0)                     ///< Front index file offset
+#define SPIFFS_CIRCULAR_QUEUE_HEAD_BACK     (sizeof(uint32_t))      ///< Back index file offset
+#define SPIFFS_CIRCULAR_QUEUE_HEAD_COUNT    (sizeof(uint16_t))      ///< Elements count file offset
+#define SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET   (sizeof(uint32_t)*2 + \
+                                             sizeof(uint16_t))      ///< Data location file offset
 #define SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - \
                                             SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET)  ///< Max data size
 
@@ -51,6 +53,7 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
             if ((fd = fopen(cq->fn, "w"))) {
                 cq->front = 0;
                 cq->back = 0;
+                cq->count = 0;
                 
                 // set front and back indices in the file's head
                 uint8_t nwritten = fwrite(&(cq->front), 1, sizeof(cq->front), fd);
@@ -68,6 +71,7 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
                 // read front and back indices from the file's head
                 uint8_t nread = fread(&(cq->front), 1, sizeof(cq->front), fd);
                 nread += fread(&(cq->back), 1, sizeof(cq->back), fd);
+                nread += fread(&(cq->count), 1, sizeof(cq->count), fd);
                 if (nread != SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET) ret = 0;
 
                 fclose(fd);
@@ -81,6 +85,7 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
     return ret;
 }
 
+// Be responsible for passing elem of SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE
 uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t * elem, uint32_t *elem_size) {
     uint8_t ret = 0;
 
@@ -95,10 +100,11 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t * elem
     uint8_t ret = 0;
 
     if (elem_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE &&
-        spiffs_circular_queue_size(cq) + elem_size <= SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE) 
+        spiffs_circular_queue_available_space(cq) + elem_size <= SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE) 
     {
         if (_write_medium(cq, elem, elem_size)) {
             cq->back = (cq->back + sizeof(uint32_t) + elem_size) % SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE;
+            cq->count++;
             _spiffs_circular_queue_persist(cq);
             ret = 1;
         } else {
@@ -118,6 +124,7 @@ uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq) {
         if (_read_medium(cq, NULL, &back_elem_size)) {
             // advance front index
             cq->front = (cq->front + sizeof(uint32_t) + back_elem_size) % SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE;
+            cq->count--;
             _spiffs_circular_queue_persist(cq);
             ret = 1;
         }
@@ -134,6 +141,7 @@ uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq) {
         // write front and back indices to the file's head
         nwritten += fwrite(&(cq->front), 1, sizeof(cq->front), fd);
         nwritten += fwrite(&(cq->back), 1, sizeof(cq->back), fd);
+        nwritten += fwrite(&(cq->count), 1, sizeof(cq->count), fd);
     
         fclose(fd);
     }
@@ -142,11 +150,30 @@ uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq) {
 }
 
 uint8_t spiffs_circular_queue_is_empty(const circular_queue_t *cq) {
-    return !spiffs_circular_queue_size(cq);
+    return !cq->count;
 }
 
-uint16_t spiffs_circular_queue_size(const circular_queue_t *cq) {
-    return (cq->back >= cq->front? (cq->back - cq->front) : (SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE - cq->front + cq->back));
+uint32_t spiffs_circular_queue_size(const circular_queue_t *cq) {
+    uint32_t qsize = 0;
+
+    if (cq->back > cq->front) {
+        qsize = cq->back - cq->front - cq->count*sizeof(uint32_t);
+    } else if (cq->back < cq->front) {
+        qsize = SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE - cq->front + cq->back - cq->count*sizeof(uint32_t);
+    } else if (cq->count) { // && indices are equal
+        qsize = SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE - cq->count*sizeof(uint32_t);
+    }
+
+    return qsize;
+}
+
+uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq) {
+    // (cq->count + 1) allows to return a real estimate
+    //   for the next element to be enqueued.
+    // not upper limited by the SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE.
+    //   Check this value to see max elem size you can enqueue.
+    return (SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE - 
+            (spiffs_circular_queue_size(cq) + (cq->count + 1)*sizeof(uint32_t)) );
 }
 
 uint16_t spiffs_circular_queue_get_front_idx(const circular_queue_t *cq) {
@@ -155,6 +182,10 @@ uint16_t spiffs_circular_queue_get_front_idx(const circular_queue_t *cq) {
 
 uint16_t spiffs_circular_queue_get_back_idx(const circular_queue_t *cq) {
     return cq->back;
+}
+
+uint32_t spiffs_circular_queue_get_count(const circular_queue_t *cq) {
+    return cq->count;
 }
 
 uint8_t spiffs_circular_queue_free(circular_queue_t *cq, const uint8_t unmount_spiffs) {
