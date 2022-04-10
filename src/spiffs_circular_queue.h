@@ -18,6 +18,7 @@ typedef struct {
     char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS.
     uint32_t front = 0;                 ///< Queue front byte index
     uint32_t back = 0;                  ///< Queue back byte index
+    uint16_t count = 0;                 ///< Queue nodes count
 } circular_queue_t;
 
 #ifdef __cplusplus
@@ -73,13 +74,17 @@ uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq);
 uint8_t spiffs_circular_queue_is_empty(const circular_queue_t *cq);
 
 /**
- *	Returns the current queue size according to the current indices.
+ *	Returns the current queue pure data size.
+ *
+ *  This function is useful when you need to know how much pure data
+ *  you still need to process/send. It does not account nodes sizes
+ *  stored at head of each node.
  *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
  *
- *	@return					queue size
+ *	@return					queue size in bytes
  */
-uint16_t spiffs_circular_queue_size(const circular_queue_t *cq);
+uint32_t spiffs_circular_queue_size(const circular_queue_t *cq);
 
 /**
  *	Gets the front index of the queue
@@ -88,7 +93,7 @@ uint16_t spiffs_circular_queue_size(const circular_queue_t *cq);
  *
  *	@return					front index
  */
-uint16_t spiffs_circular_queue_get_front_indx(const circular_queue_t *cq);
+uint32_t spiffs_circular_queue_get_front_indx(const circular_queue_t *cq);
 
 /**
  *	Gets the back index of the queue
@@ -97,7 +102,16 @@ uint16_t spiffs_circular_queue_get_front_indx(const circular_queue_t *cq);
  *
  *	@return					back index
  */
-uint16_t spiffs_circular_queue_get_back_indx(const circular_queue_t *cq);
+uint32_t spiffs_circular_queue_get_back_indx(const circular_queue_t *cq);
+
+/**
+ *	Gets the queue nodes count
+ *
+ *	@param[in] cq 			Pointer to the circular_queue_t struct
+ *
+ *	@return					queue nodes count
+ */
+uint32_t spiffs_circular_queue_get_count(const circular_queue_t *cq);
 
 /**
  *	Frees resourses allocated for the queue and closes the SPIFFS.
