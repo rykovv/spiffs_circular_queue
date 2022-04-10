@@ -188,6 +188,12 @@ uint32_t spiffs_circular_queue_get_count(const circular_queue_t *cq) {
     return cq->count;
 }
 
+uint32_t spiffs_circular_queue_get_file_size(const circular_queue_t *cq) {
+    struct stat sb;
+    
+    return stat(cq->fn, &sb) < 0 ? 0 : sb.st_size;
+}
+
 uint8_t spiffs_circular_queue_free(circular_queue_t *cq, const uint8_t unmount_spiffs) {
     uint8_t ret = 0;
 
