@@ -102,7 +102,7 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t * elem
     uint8_t ret = 0;
 
     if (elem_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE &&
-        (spiffs_circular_queue_available_space(cq) - elem_size) > 0) 
+        (spiffs_circular_queue_available_space(cq) - elem_size) >= 0) 
     {
         if (_write_medium(cq, elem, elem_size)) {
             cq->back = (cq->back + sizeof(uint32_t) + elem_size) % SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE;
@@ -170,12 +170,13 @@ uint32_t spiffs_circular_queue_size(const circular_queue_t *cq) {
 }
 
 uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq) {
-    // (cq->count + 1) allows to return a real estimate
-    //   for the next element to be enqueued.
+    // allows to return a real estimate for the next element 
+    //   to be enqueued.
     // not upper limited by the SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE.
     //   Check this value to see max elem size you can enqueue.
-    return (SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE - 
-            (spiffs_circular_queue_size(cq) + (cq->count + 1)*sizeof(uint32_t)) );
+    uint32_t gross_available_space = SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE - 
+                                (spiffs_circular_queue_size(cq) + cq->count*sizeof(uint32_t));
+    return gross_available_space <= sizeof(uint32_t) ? 0 : gross_available_space - sizeof(uint32_t);
 }
 
 uint16_t spiffs_circular_queue_get_front_idx(const circular_queue_t *cq) {
