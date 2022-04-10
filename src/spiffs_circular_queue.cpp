@@ -58,9 +58,11 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
                 // set front and back indices in the file's head
                 uint8_t nwritten = fwrite(&(cq->front), 1, sizeof(cq->front), fd);
                 nwritten += fwrite(&(cq->back), 1, sizeof(cq->back), fd);
+                nwritten += fwrite(&(cq->count), 1, sizeof(cq->count), fd);
                 if (nwritten != SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET) ret = 0;
                 
                 fclose(fd);
+                printf("new file created\n");
             } else {
                 ret = 0;
                 printf("unable to create new file\n");
@@ -100,7 +102,7 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t * elem
     uint8_t ret = 0;
 
     if (elem_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE &&
-        spiffs_circular_queue_available_space(cq) + elem_size <= SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE) 
+        (spiffs_circular_queue_available_space(cq) - elem_size) > 0) 
     {
         if (_write_medium(cq, elem, elem_size)) {
             cq->back = (cq->back + sizeof(uint32_t) + elem_size) % SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE;
@@ -190,7 +192,7 @@ uint32_t spiffs_circular_queue_get_count(const circular_queue_t *cq) {
 
 uint32_t spiffs_circular_queue_get_file_size(const circular_queue_t *cq) {
     struct stat sb;
-    
+
     return stat(cq->fn, &sb) < 0 ? 0 : sb.st_size;
 }
 
