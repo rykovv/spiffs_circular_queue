@@ -102,7 +102,7 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t * elem
     uint8_t ret = 0;
 
     if (elem_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE &&
-        (spiffs_circular_queue_available_space(cq) - elem_size) >= 0) 
+        spiffs_circular_queue_available_space(cq) >= elem_size) 
     {
         if (_write_medium(cq, elem, elem_size)) {
             cq->back = (cq->back + sizeof(uint32_t) + elem_size) % SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE;
