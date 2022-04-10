@@ -28,11 +28,10 @@ extern "C" {
  *	Initializes the library creating/reading a spiffs data file. Sets current front and back queue indices.
  *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
-  *	@param[in] mount_spiffs Mount SPIFFS on init flag
  *
  *	@return					1 on success and 0 on fail
  */
-uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spiffs = 1);
+uint8_t spiffs_circular_queue_init(circular_queue_t *cq);
 
 /**
  *	Copies front queue element of elem_size size to the elem.
