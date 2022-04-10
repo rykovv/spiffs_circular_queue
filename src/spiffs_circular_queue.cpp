@@ -27,10 +27,19 @@ uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uin
 uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint32_t *data_size);
 uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq);
 
-uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spiffs) {
+uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
     uint8_t ret = 1;
 
-    if (mount_spiffs && !_mount_spiffs()) ret = 0;
+    if (!esp_spiffs_mounted(NULL)) {
+        ret = _mount_spiffs();
+        if (!ret)
+            printf("spiffs failed to mount\n");
+        else
+            printf("spiffs mounted\n");
+    } else {
+        printf("spiffs already mounted\n");
+        ret = 1;
+    }
 
     if (ret) {
         struct stat sb;
@@ -38,6 +47,7 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spi
 
         // stat returns 0 upon succes (file exists) and -1 on failure (does not)
         if (stat(cq->fn, &sb) < 0) {
+            printf("file does not exist\n");
             if ((fd = fopen(cq->fn, "w"))) {
                 cq->front = 0;
                 cq->back = 0;
@@ -50,9 +60,11 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spi
                 fclose(fd);
             } else {
                 ret = 0;
+                printf("unable to create new file\n");
             }
         } else {
             if ((fd = fopen(cq->fn, "r+b"))) {
+                printf("file exists and was open for read\n");
                 // read front and back indices from the file's head
                 uint8_t nread = fread(&(cq->front), 1, sizeof(cq->front), fd);
                 nread += fread(&(cq->back), 1, sizeof(cq->back), fd);
@@ -60,6 +72,7 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq, const uint8_t mount_spi
 
                 fclose(fd);
             } else {
+                printf("file exists but failed on fopen\n");
                 ret = 0;
             }
         }
