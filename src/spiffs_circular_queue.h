@@ -87,6 +87,15 @@ uint8_t spiffs_circular_queue_is_empty(const circular_queue_t *cq);
 uint32_t spiffs_circular_queue_size(const circular_queue_t *cq);
 
 /**
+ *	Returns queue available space in bytes.
+ *
+ *	@param[in] cq 			Pointer to the circular_queue_t struct
+ *
+ *	@return					queue available space in bytes
+ */
+uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq);
+
+/**
  *	Gets the front index of the queue
  *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
