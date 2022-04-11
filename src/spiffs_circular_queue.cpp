@@ -7,8 +7,10 @@
 #include "spiffs_circular_queue.h"
 
 #ifdef ESP32
-#include "sys/stat.h" // extensa toolchain library, works with esp32
+#include "sys/stat.h"
 #include "esp_spiffs.h"
+#else
+#error Library designed to work with ESP32-IDE and x-tensa toolchain 
 #endif
 
 #define SPIFFS_CIRCULAR_QUEUE_HEAD_FRONT    (0)                     ///< Front index file offset
