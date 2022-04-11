@@ -22,14 +22,15 @@
                                             SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET)  ///< Max data size
 
 /// private function to mount SPIFFS during initialization
-uint8_t  _mount_spiffs(void);
+static uint8_t  _mount_spiffs(void);
 /// private function to unmount SPIFFS when you don't need it, i.e. before going in a sleep mode
-void     _unmount_spiffs(void);
+static void     _unmount_spiffs(void);
 /// private function that adds write medium-independent abstraction
-uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uint16_t data_size);
+static uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uint16_t data_size);
 /// private function that adds read medium-independent abstraction. data = NULL to read only the size of last elem
-uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t *data_size);
-uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq);
+static uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t *data_size);
+/// private function that saves current pointers to the queue file
+static uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq);
 
 uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
     uint8_t ret = 1;
@@ -126,22 +127,6 @@ uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, uint8_t *elem, uint1
     return ret;
 }
 
-uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq) {
-    FILE *fd = NULL;
-    uint8_t nwritten = 0;
-
-    if ((fd = fopen(cq->fn, "r+b"))) {
-        // write front and back indices to the file's head
-        nwritten += fwrite(&(cq->front), 1, sizeof(cq->front), fd);
-        nwritten += fwrite(&(cq->back), 1, sizeof(cq->back), fd);
-        nwritten += fwrite(&(cq->count), 1, sizeof(cq->count), fd);
-    
-        fclose(fd);
-    }
-    
-    return (nwritten == SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET);
-}
-
 uint8_t spiffs_circular_queue_is_empty(const circular_queue_t *cq) {
     return !cq->count;
 }
@@ -200,7 +185,23 @@ uint8_t spiffs_circular_queue_free(circular_queue_t *cq, const uint8_t unmount_s
     return ret;
 }
 
-uint8_t _mount_spiffs(void) {
+static uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq) {
+    FILE *fd = NULL;
+    uint8_t nwritten = 0;
+
+    if ((fd = fopen(cq->fn, "r+b"))) {
+        // write front and back indices to the file's head
+        nwritten += fwrite(&(cq->front), 1, sizeof(cq->front), fd);
+        nwritten += fwrite(&(cq->back), 1, sizeof(cq->back), fd);
+        nwritten += fwrite(&(cq->count), 1, sizeof(cq->count), fd);
+    
+        fclose(fd);
+    }
+    
+    return (nwritten == SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET);
+}
+
+static uint8_t _mount_spiffs(void) {
     esp_vfs_spiffs_conf_t conf = {
         .base_path = "/spiffs",
         .partition_label = NULL,
@@ -212,11 +213,11 @@ uint8_t _mount_spiffs(void) {
     return (ret == ESP_OK);
 }
 
-void _unmount_spiffs(void) {
+static void _unmount_spiffs(void) {
     esp_vfs_spiffs_unregister(NULL);
 }
 
-uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uint16_t data_size) {
+static uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uint16_t data_size) {
     // spiffs medium
     FILE *fd = NULL;
     uint16_t nwritten = 0;
@@ -259,7 +260,7 @@ uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uin
 }
 
 // read only non-null-pointer data and data_size
-uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t *data_size) {
+static uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t *data_size) {
     // spiffs medium
     FILE *fd = NULL;
     uint16_t nread = 0;
