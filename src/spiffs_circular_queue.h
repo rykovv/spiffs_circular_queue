@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 /**
- *	Initializes the library creating/reading a spiffs data file. Sets current front and back queue indices.
+ *	Initializes the library creating/reading a spiffs data file. Sets current front, back, and count queue indices.
  *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
  *
@@ -104,7 +104,7 @@ uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq);
  *
  *	@return					front index
  */
-uint32_t spiffs_circular_queue_get_front_indx(const circular_queue_t *cq);
+uint32_t spiffs_circular_queue_get_front_idx(const circular_queue_t *cq);
 
 /**
  *	Gets the back index of the queue
@@ -113,7 +113,7 @@ uint32_t spiffs_circular_queue_get_front_indx(const circular_queue_t *cq);
  *
  *	@return					back index
  */
-uint32_t spiffs_circular_queue_get_back_indx(const circular_queue_t *cq);
+uint32_t spiffs_circular_queue_get_back_idx(const circular_queue_t *cq);
 
 /**
  *	Gets the queue nodes count
