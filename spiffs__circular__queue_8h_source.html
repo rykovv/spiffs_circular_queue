@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SPIFFS Circular Queue: spiffs_circular_queue.h Source File</title>
+<title>SPIFFS Circular Queue: src/spiffs_circular_queue.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">SPIFFS Circular Queue<span id="projectnumber">&#160;1.0</span>
+   <div id="projectname">SPIFFS Circular Queue<span id="projectnumber">&#160;1.1</span>
    </div>
    <div id="projectbrief">The library provides functionality of a Circular Queue or Circular FIFO stored in SPIFFS. It was initially design for ESP32 microcontroller to store RAM content (network packets and other variables) when go to deep sleep modes.</div>
   </td>
@@ -47,7 +47,6 @@ $(function() {
 /* @license-end */
 </script>
 <div id="main-nav"></div>
-</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -62,55 +61,80 @@ $(function() {
 </iframe>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
+</div>
+</div><!-- top -->
 <div class="header">
   <div class="headertitle"><div class="title">spiffs_circular_queue.h</div></div>
 </div><!--header-->
 <div class="contents">
 <a href="spiffs__circular__queue_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#ifndef __SPIFFS_CIRCULAR_QUEUE_MANAGER__H__</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define __SPIFFS_CIRCULAR_QUEUE_MANAGER__H__</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#ifndef __SPIFFS_CIRCULAR_QUEUE__H__</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#define __SPIFFS_CIRCULAR_QUEUE__H__</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#define SPIFFS_CIRCULAR_QUEUE_MAX_SIZE            (256)</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#define SPIFFS_CIRCULAR_QUEUE_ITEM_SIZE           (256)</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;Arduino.h&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="spiffs__circular__queue_8h.html#a5e414bb018ca4ce79e2fc6247bbb31af">   10</a></span><span class="preprocessor">#define SPIFFS_MAX_FILES_COUNT                    (3)    </span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="spiffs__circular__queue_8h.html#aebe453f75e404890f154ca1fa86a2d7b">   11</a></span><span class="preprocessor">#define SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE       (32)   </span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="spiffs__circular__queue_8h.html#ad543d8620bdb06bfcef6062abd432ede">   12</a></span><span class="preprocessor">#define SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE       (256)  </span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="spiffs__circular__queue_8h.html#a96c73744ab249197058ea26b8659821f">   13</a></span><span class="preprocessor">#define SPIFFS_FILE_NAME_MAX_SIZE                 (32)   </span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>uint8_t     <a class="code hl_function" href="spiffs__circular__queue_8h.html#a6cd16bc18e780593b99ca0c055d204d2">spiffs_circular_queue_init</a>(uint16_t front = 0, uint16_t back = 0);</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;Arduino.h&gt;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="structcircular__queue__t.html">   17</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="structcircular__queue__t.html#a8e8b55ce6a2e2ea05092fbf58f11179f">   18</a></span>    <span class="keywordtype">char</span> fn[<a class="code hl_define" href="spiffs__circular__queue_8h.html#a96c73744ab249197058ea26b8659821f">SPIFFS_FILE_NAME_MAX_SIZE</a>]; </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="structcircular__queue__t.html#a5f40aa395bf8876ca11769d6d8204f46">   19</a></span>    uint32_t front = 0;                 </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="structcircular__queue__t.html#a96dc8ddfe95b2bc2b78b9752e09fd8e0">   20</a></span>    uint32_t back = 0;                  </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="structcircular__queue__t.html#af6a39bfc7e1dc3b6f9c997c1c43fa996">   21</a></span>    uint16_t count = 0;                 </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>} <a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a>;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a4db1f7ef752c5349cc868b18a9f851aa">spiffs_circular_queue_front</a>(uint8_t *elem);</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a78e9ecccb42043b2d5aecc5428be7eba">spiffs_circular_queue_init</a>(<a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq);</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#af809cff69f6439a6b7263439487a8be7">spiffs_circular_queue_enqueue</a>(uint8_t *elem);</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keywordtype">void</span>    <a class="code hl_function" href="spiffs__circular__queue_8h.html#ab69e04853aafbe1124b50670f61857b9">spiffs_circular_queue_dequeue</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#ab76e576100d1558649d01ed9a203d21c">spiffs_circular_queue_is_empty</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#afbab420730de60cce6ee5c0d276113bb">spiffs_circular_queue_front</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq, uint8_t *elem, uint16_t *elem_size);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#aaac64faa64d12a6432905b6c5429d13a">spiffs_circular_queue_enqueue</a>(<a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq, <span class="keyword">const</span> uint8_t *elem, <span class="keyword">const</span> uint16_t elem_size);</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>uint16_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#af2043fd45ba33ea20885392d1d8f97a4">spiffs_circular_queue_size</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="spiffs__circular__queue_8h.html#a81e7916db65cf39dd0ce8a85eee5b043">   70</a></span>uint16_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a81e7916db65cf39dd0ce8a85eee5b043">spiffs_circular_queue_get_front_indx</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="spiffs__circular__queue_8h.html#a3ecd63e05fdd9be6e18864829ed9b6af">   77</a></span>uint16_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a3ecd63e05fdd9be6e18864829ed9b6af">spiffs_circular_queue_get_back_indx</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a75ef7004f2740094dbb88ee9cfc63a33">spiffs_circular_queue_free</a>(<span class="keywordtype">void</span>);</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>}</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="preprocessor">#endif </span><span class="comment">// __SPIFFS_CIRCULAR_QUEUE_MANAGER__H__</span></div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_a3ecd63e05fdd9be6e18864829ed9b6af"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a3ecd63e05fdd9be6e18864829ed9b6af">spiffs_circular_queue_get_back_indx</a></div><div class="ttdeci">uint16_t spiffs_circular_queue_get_back_indx(void)</div><div class="ttdoc">Gets the back index of the queue.</div></div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_a4db1f7ef752c5349cc868b18a9f851aa"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a4db1f7ef752c5349cc868b18a9f851aa">spiffs_circular_queue_front</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_front(uint8_t *elem)</div><div class="ttdoc">Copies front element of the queue into elem pointer.</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:44</div></div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_a6cd16bc18e780593b99ca0c055d204d2"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a6cd16bc18e780593b99ca0c055d204d2">spiffs_circular_queue_init</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_init(uint16_t front=0, uint16_t back=0)</div><div class="ttdoc">Initializes the library and sets current front and back queue indices (useful for ESP32 MCU)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:22</div></div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_a75ef7004f2740094dbb88ee9cfc63a33"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a75ef7004f2740094dbb88ee9cfc63a33">spiffs_circular_queue_free</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_free(void)</div><div class="ttdoc">Frees resourses allocated for the queue and closes the SPIFFS.</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:103</div></div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_a81e7916db65cf39dd0ce8a85eee5b043"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a81e7916db65cf39dd0ce8a85eee5b043">spiffs_circular_queue_get_front_indx</a></div><div class="ttdeci">uint16_t spiffs_circular_queue_get_front_indx(void)</div><div class="ttdoc">Gets the front index of the queue.</div></div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_ab69e04853aafbe1124b50670f61857b9"><div class="ttname"><a href="spiffs__circular__queue_8h.html#ab69e04853aafbe1124b50670f61857b9">spiffs_circular_queue_dequeue</a></div><div class="ttdeci">void spiffs_circular_queue_dequeue(void)</div><div class="ttdoc">Pops out the first element of the queue.</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:80</div></div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_ab76e576100d1558649d01ed9a203d21c"><div class="ttname"><a href="spiffs__circular__queue_8h.html#ab76e576100d1558649d01ed9a203d21c">spiffs_circular_queue_is_empty</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_is_empty(void)</div><div class="ttdoc">Checks whether the queue is empty or not.</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:87</div></div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_af2043fd45ba33ea20885392d1d8f97a4"><div class="ttname"><a href="spiffs__circular__queue_8h.html#af2043fd45ba33ea20885392d1d8f97a4">spiffs_circular_queue_size</a></div><div class="ttdeci">uint16_t spiffs_circular_queue_size(void)</div><div class="ttdoc">Returns the current queue size according to the current indices.</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:91</div></div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_af809cff69f6439a6b7263439487a8be7"><div class="ttname"><a href="spiffs__circular__queue_8h.html#af809cff69f6439a6b7263439487a8be7">spiffs_circular_queue_enqueue</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_enqueue(uint8_t *elem)</div><div class="ttdoc">Enqueues elem to the front of the queue.</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:60</div></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a99e03a0466456d1de9440b91c19c8d20">spiffs_circular_queue_dequeue</a>(<a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq, uint8_t *elem = NULL, uint16_t *elem_size = NULL);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a5f2edc2a8e438e49b82cfacf3549bc06">spiffs_circular_queue_is_empty</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq);</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>uint32_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#acaa4299177b4e6c9e7dd2177f3312f39">spiffs_circular_queue_size</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>uint32_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a395811a4773754f3e104275c2ddb21d7">spiffs_circular_queue_available_space</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq);</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>uint32_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a92d3d8cb47b23a3412c2c7b56da83224">spiffs_circular_queue_get_front_idx</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq);</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>uint32_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a809ceb8a0e18fd4093885c9ab5cef173">spiffs_circular_queue_get_back_idx</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq);</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>uint16_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a0006c7e702d03f3c1567e89d1f021f67">spiffs_circular_queue_get_count</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq);</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>uint32_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#aebe05c4ca0342f0c6116591dc5c0f1a2">spiffs_circular_queue_get_file_size</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq);</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>uint8_t <a class="code hl_function" href="spiffs__circular__queue_8h.html#a04d04575c1b6eb433c3b5a7d1b2ce026">spiffs_circular_queue_free</a>(<a class="code hl_struct" href="structcircular__queue__t.html">circular_queue_t</a> *cq, <span class="keyword">const</span> uint8_t unmount_spiffs = 1);</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>}</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span><span class="preprocessor">#endif </span><span class="comment">// __SPIFFS_CIRCULAR_QUEUE__H__</span></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_a0006c7e702d03f3c1567e89d1f021f67"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a0006c7e702d03f3c1567e89d1f021f67">spiffs_circular_queue_get_count</a></div><div class="ttdeci">uint16_t spiffs_circular_queue_get_count(const circular_queue_t *cq)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:166</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_a04d04575c1b6eb433c3b5a7d1b2ce026"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a04d04575c1b6eb433c3b5a7d1b2ce026">spiffs_circular_queue_free</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_free(circular_queue_t *cq, const uint8_t unmount_spiffs=1)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:176</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_a395811a4773754f3e104275c2ddb21d7"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a395811a4773754f3e104275c2ddb21d7">spiffs_circular_queue_available_space</a></div><div class="ttdeci">uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:148</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_a5f2edc2a8e438e49b82cfacf3549bc06"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a5f2edc2a8e438e49b82cfacf3549bc06">spiffs_circular_queue_is_empty</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_is_empty(const circular_queue_t *cq)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:130</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_a78e9ecccb42043b2d5aecc5428be7eba"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a78e9ecccb42043b2d5aecc5428be7eba">spiffs_circular_queue_init</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_init(circular_queue_t *cq)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:35</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_a809ceb8a0e18fd4093885c9ab5cef173"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a809ceb8a0e18fd4093885c9ab5cef173">spiffs_circular_queue_get_back_idx</a></div><div class="ttdeci">uint32_t spiffs_circular_queue_get_back_idx(const circular_queue_t *cq)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:162</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_a92d3d8cb47b23a3412c2c7b56da83224"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a92d3d8cb47b23a3412c2c7b56da83224">spiffs_circular_queue_get_front_idx</a></div><div class="ttdeci">uint32_t spiffs_circular_queue_get_front_idx(const circular_queue_t *cq)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:158</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_a96c73744ab249197058ea26b8659821f"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a96c73744ab249197058ea26b8659821f">SPIFFS_FILE_NAME_MAX_SIZE</a></div><div class="ttdeci">#define SPIFFS_FILE_NAME_MAX_SIZE</div><div class="ttdoc">SPIFFS maximum allowable file name length.</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.h:13</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_a99e03a0466456d1de9440b91c19c8d20"><div class="ttname"><a href="spiffs__circular__queue_8h.html#a99e03a0466456d1de9440b91c19c8d20">spiffs_circular_queue_dequeue</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, uint8_t *elem=NULL, uint16_t *elem_size=NULL)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:111</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_aaac64faa64d12a6432905b6c5429d13a"><div class="ttname"><a href="spiffs__circular__queue_8h.html#aaac64faa64d12a6432905b6c5429d13a">spiffs_circular_queue_enqueue</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t *elem, const uint16_t elem_size)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:94</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_acaa4299177b4e6c9e7dd2177f3312f39"><div class="ttname"><a href="spiffs__circular__queue_8h.html#acaa4299177b4e6c9e7dd2177f3312f39">spiffs_circular_queue_size</a></div><div class="ttdeci">uint32_t spiffs_circular_queue_size(const circular_queue_t *cq)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:134</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_aebe05c4ca0342f0c6116591dc5c0f1a2"><div class="ttname"><a href="spiffs__circular__queue_8h.html#aebe05c4ca0342f0c6116591dc5c0f1a2">spiffs_circular_queue_get_file_size</a></div><div class="ttdeci">uint32_t spiffs_circular_queue_get_file_size(const circular_queue_t *cq)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:170</div></div>
+<div class="ttc" id="aspiffs__circular__queue_8h_html_afbab420730de60cce6ee5c0d276113bb"><div class="ttname"><a href="spiffs__circular__queue_8h.html#afbab420730de60cce6ee5c0d276113bb">spiffs_circular_queue_front</a></div><div class="ttdeci">uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t *elem, uint16_t *elem_size)</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.cpp:84</div></div>
+<div class="ttc" id="astructcircular__queue__t_html"><div class="ttname"><a href="structcircular__queue__t.html">circular_queue_t</a></div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.h:17</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

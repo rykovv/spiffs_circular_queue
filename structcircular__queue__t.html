@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SPIFFS Circular Queue: File List</title>
+<title>SPIFFS Circular Queue: circular_queue_t Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -47,7 +47,6 @@ $(function() {
 /* @license-end */
 </script>
 <div id="main-nav"></div>
-</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -62,17 +61,36 @@ $(function() {
 </iframe>
 </div>
 
+</div><!-- top -->
 <div class="header">
-  <div class="headertitle"><div class="title">File List</div></div>
+  <div class="summary">
+<a href="#pub-attribs">Data Fields</a>  </div>
+  <div class="headertitle"><div class="title">circular_queue_t Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all documented files with brief descriptions:</div><div class="directory">
-<div class="levels">[detail level <span onclick="javascript:toggleLevel(1);">1</span><span onclick="javascript:toggleLevel(2);">2</span>]</div><table class="directory">
-<tr id="row_0_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_0_" class="arrow" onclick="toggleFolder('0_')">&#9660;</span><span id="img_0_" class="iconfopen" onclick="toggleFolder('0_')">&#160;</span><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" target="_self">src</a></td><td class="desc"></td></tr>
-<tr id="row_0_0_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icondoc"></span><a class="el" href="spiffs__circular__queue_8cpp.html" target="_self">spiffs_circular_queue.cpp</a></td><td class="desc"></td></tr>
-<tr id="row_0_1_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a href="spiffs__circular__queue_8h_source.html"><span class="icondoc"></span></a><a class="el" href="spiffs__circular__queue_8h.html" target="_self">spiffs_circular_queue.h</a></td><td class="desc"></td></tr>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Data Fields</h2></td></tr>
+<tr class="memitem:a8e8b55ce6a2e2ea05092fbf58f11179f"><td class="memItemLeft" align="right" valign="top"><a id="a8e8b55ce6a2e2ea05092fbf58f11179f" name="a8e8b55ce6a2e2ea05092fbf58f11179f"></a>
+char&#160;</td><td class="memItemRight" valign="bottom"><b>fn</b> [<a class="el" href="spiffs__circular__queue_8h.html#a96c73744ab249197058ea26b8659821f">SPIFFS_FILE_NAME_MAX_SIZE</a>]</td></tr>
+<tr class="memdesc:a8e8b55ce6a2e2ea05092fbf58f11179f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Path to store the queue data in SPIFFS. <br /></td></tr>
+<tr class="separator:a8e8b55ce6a2e2ea05092fbf58f11179f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f40aa395bf8876ca11769d6d8204f46"><td class="memItemLeft" align="right" valign="top"><a id="a5f40aa395bf8876ca11769d6d8204f46" name="a5f40aa395bf8876ca11769d6d8204f46"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>front</b> = 0</td></tr>
+<tr class="memdesc:a5f40aa395bf8876ca11769d6d8204f46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue front byte index. <br /></td></tr>
+<tr class="separator:a5f40aa395bf8876ca11769d6d8204f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96dc8ddfe95b2bc2b78b9752e09fd8e0"><td class="memItemLeft" align="right" valign="top"><a id="a96dc8ddfe95b2bc2b78b9752e09fd8e0" name="a96dc8ddfe95b2bc2b78b9752e09fd8e0"></a>
+uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>back</b> = 0</td></tr>
+<tr class="memdesc:a96dc8ddfe95b2bc2b78b9752e09fd8e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue back byte index. <br /></td></tr>
+<tr class="separator:a96dc8ddfe95b2bc2b78b9752e09fd8e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6a39bfc7e1dc3b6f9c997c1c43fa996"><td class="memItemLeft" align="right" valign="top"><a id="af6a39bfc7e1dc3b6f9c997c1c43fa996" name="af6a39bfc7e1dc3b6f9c997c1c43fa996"></a>
+uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>count</b> = 0</td></tr>
+<tr class="memdesc:af6a39bfc7e1dc3b6f9c997c1c43fa996"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue nodes count. <br /></td></tr>
+<tr class="separator:af6a39bfc7e1dc3b6f9c997c1c43fa996"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- directory -->
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/<a class="el" href="spiffs__circular__queue_8h_source.html">spiffs_circular_queue.h</a></li>
+</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

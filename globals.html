@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SPIFFS Circular Queue: File Members</title>
+<title>SPIFFS Circular Queue: Globals</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">SPIFFS Circular Queue<span id="projectnumber">&#160;1.0</span>
+   <div id="projectname">SPIFFS Circular Queue<span id="projectnumber">&#160;1.1</span>
    </div>
    <div id="projectbrief">The library provides functionality of a Circular Queue or Circular FIFO stored in SPIFFS. It was initially design for ESP32 microcontroller to store RAM content (network packets and other variables) when go to deep sleep modes.</div>
   </td>
@@ -63,19 +63,30 @@ $(function() {
 </div>
 
 <div class="contents">
-<div class="textblock">Here is a list of all documented file members with links to the documentation:</div><ul>
-<li>_mount_spiffs()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#ae4b25d28c2be12586c17e60dee7a1ad7">spiffs_circular_queue.cpp</a></li>
-<li>_unmount_spiffs()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a5db196f4ec71d6c4ea988919a6624195">spiffs_circular_queue.cpp</a></li>
-<li>send_queue_filename&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#af34ebe89b0fc2dc0f3b535d055424bff">spiffs_circular_queue.cpp</a></li>
-<li>spiffs_circular_queue_dequeue()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#af9e12745066119e981e83da0235de59b">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#ab69e04853aafbe1124b50670f61857b9">spiffs_circular_queue.h</a></li>
-<li>spiffs_circular_queue_enqueue()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#af809cff69f6439a6b7263439487a8be7">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#af809cff69f6439a6b7263439487a8be7">spiffs_circular_queue.h</a></li>
-<li>spiffs_circular_queue_free()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a75ef7004f2740094dbb88ee9cfc63a33">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a75ef7004f2740094dbb88ee9cfc63a33">spiffs_circular_queue.h</a></li>
-<li>spiffs_circular_queue_front()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a4db1f7ef752c5349cc868b18a9f851aa">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a4db1f7ef752c5349cc868b18a9f851aa">spiffs_circular_queue.h</a></li>
-<li>spiffs_circular_queue_get_back_indx()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8h.html#a3ecd63e05fdd9be6e18864829ed9b6af">spiffs_circular_queue.h</a></li>
-<li>spiffs_circular_queue_get_front_indx()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8h.html#a81e7916db65cf39dd0ce8a85eee5b043">spiffs_circular_queue.h</a></li>
-<li>spiffs_circular_queue_init()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a4330e90342cb7a63cf96fba0040c0203">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a6cd16bc18e780593b99ca0c055d204d2">spiffs_circular_queue.h</a></li>
-<li>spiffs_circular_queue_is_empty()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a5b5237e6c5033ed3224dcef48b1cf090">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#ab76e576100d1558649d01ed9a203d21c">spiffs_circular_queue.h</a></li>
-<li>spiffs_circular_queue_size()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#afb6e400b1eb2818b42ca3a12387f992c">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#af2043fd45ba33ea20885392d1d8f97a4">spiffs_circular_queue.h</a></li>
+<div class="textblock">Here is a list of all documented functions, variables, defines, enums, and typedefs with links to the documentation:</div>
+
+<h3><a id="index_s" name="index_s"></a>- s -</h3><ul>
+<li>spiffs_circular_queue_available_space()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a395811a4773754f3e104275c2ddb21d7">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a395811a4773754f3e104275c2ddb21d7">spiffs_circular_queue.h</a></li>
+<li>SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#ac48ef62aabf78fda664822e4975fb6e7">spiffs_circular_queue.cpp</a></li>
+<li>spiffs_circular_queue_dequeue()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a6582bf7ede71c61337834d0b36f00f63">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a99e03a0466456d1de9440b91c19c8d20">spiffs_circular_queue.h</a></li>
+<li>spiffs_circular_queue_enqueue()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#aaac64faa64d12a6432905b6c5429d13a">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#aaac64faa64d12a6432905b6c5429d13a">spiffs_circular_queue.h</a></li>
+<li>SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE&#160;:&#160;<a class="el" href="spiffs__circular__queue_8h.html#aebe453f75e404890f154ca1fa86a2d7b">spiffs_circular_queue.h</a></li>
+<li>spiffs_circular_queue_free()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a94d26345c5fd510f5cb3d2451a8c82d5">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a04d04575c1b6eb433c3b5a7d1b2ce026">spiffs_circular_queue.h</a></li>
+<li>spiffs_circular_queue_front()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#afbab420730de60cce6ee5c0d276113bb">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#afbab420730de60cce6ee5c0d276113bb">spiffs_circular_queue.h</a></li>
+<li>spiffs_circular_queue_get_back_idx()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a809ceb8a0e18fd4093885c9ab5cef173">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a809ceb8a0e18fd4093885c9ab5cef173">spiffs_circular_queue.h</a></li>
+<li>spiffs_circular_queue_get_count()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a0006c7e702d03f3c1567e89d1f021f67">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a0006c7e702d03f3c1567e89d1f021f67">spiffs_circular_queue.h</a></li>
+<li>spiffs_circular_queue_get_file_size()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#aebe05c4ca0342f0c6116591dc5c0f1a2">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#aebe05c4ca0342f0c6116591dc5c0f1a2">spiffs_circular_queue.h</a></li>
+<li>spiffs_circular_queue_get_front_idx()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a92d3d8cb47b23a3412c2c7b56da83224">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a92d3d8cb47b23a3412c2c7b56da83224">spiffs_circular_queue.h</a></li>
+<li>SPIFFS_CIRCULAR_QUEUE_HEAD_BACK&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a0882db8d80077a6e008e28468abb1513">spiffs_circular_queue.cpp</a></li>
+<li>SPIFFS_CIRCULAR_QUEUE_HEAD_COUNT&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a7bd8ebb609cfe597d94957515619df31">spiffs_circular_queue.cpp</a></li>
+<li>SPIFFS_CIRCULAR_QUEUE_HEAD_FRONT&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#add9426d2d9eea3ba48a507225eec1871">spiffs_circular_queue.cpp</a></li>
+<li>spiffs_circular_queue_init()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a78e9ecccb42043b2d5aecc5428be7eba">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a78e9ecccb42043b2d5aecc5428be7eba">spiffs_circular_queue.h</a></li>
+<li>spiffs_circular_queue_is_empty()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#a5f2edc2a8e438e49b82cfacf3549bc06">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#a5f2edc2a8e438e49b82cfacf3549bc06">spiffs_circular_queue.h</a></li>
+<li>SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#aea04801d4547e3e7189d0a696eb8244b">spiffs_circular_queue.cpp</a></li>
+<li>SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE&#160;:&#160;<a class="el" href="spiffs__circular__queue_8h.html#ad543d8620bdb06bfcef6062abd432ede">spiffs_circular_queue.h</a></li>
+<li>spiffs_circular_queue_size()&#160;:&#160;<a class="el" href="spiffs__circular__queue_8cpp.html#acaa4299177b4e6c9e7dd2177f3312f39">spiffs_circular_queue.cpp</a>, <a class="el" href="spiffs__circular__queue_8h.html#acaa4299177b4e6c9e7dd2177f3312f39">spiffs_circular_queue.h</a></li>
+<li>SPIFFS_FILE_NAME_MAX_SIZE&#160;:&#160;<a class="el" href="spiffs__circular__queue_8h.html#a96c73744ab249197058ea26b8659821f">spiffs_circular_queue.h</a></li>
+<li>SPIFFS_MAX_FILES_COUNT&#160;:&#160;<a class="el" href="spiffs__circular__queue_8h.html#a5e414bb018ca4ce79e2fc6247bbb31af">spiffs_circular_queue.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
