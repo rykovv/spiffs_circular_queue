@@ -34,12 +34,7 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
 
     if (!esp_spiffs_mounted(NULL)) {
         ret = _mount_spiffs();
-        if (!ret)
-            printf("spiffs failed to mount\n");
-        else
-            printf("spiffs mounted\n");
     } else {
-        printf("spiffs already mounted\n");
         ret = 1;
     }
 
@@ -49,7 +44,6 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
 
         // stat returns 0 upon succes (file exists) and -1 on failure (does not)
         if (stat(cq->fn, &sb) < 0) {
-            printf("file does not exist\n");
             if ((fd = fopen(cq->fn, "w"))) {
                 cq->front = 0;
                 cq->back = 0;
@@ -62,14 +56,11 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
                 if (nwritten != SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET) ret = 0;
                 
                 fclose(fd);
-                printf("new file created\n");
             } else {
                 ret = 0;
-                printf("unable to create new file\n");
             }
         } else {
             if ((fd = fopen(cq->fn, "r+b"))) {
-                printf("file exists and was open for read\n");
                 // read front and back indices from the file's head
                 uint8_t nread = fread(&(cq->front), 1, sizeof(cq->front), fd);
                 nread += fread(&(cq->back), 1, sizeof(cq->back), fd);
@@ -78,7 +69,6 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
 
                 fclose(fd);
             } else {
-                printf("file exists but failed on fopen\n");
                 ret = 0;
             }
         }
@@ -109,8 +99,6 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t * elem
             cq->count++;
             _spiffs_circular_queue_persist(cq);
             ret = 1;
-        } else {
-            printf("write_medium [FAIL]\n");
         }
     }
 
@@ -229,37 +217,28 @@ uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uin
     // spiffs medium
     FILE *fd = NULL;
     uint16_t nwritten = 0;
-    printf("_write_medium want to write %d bytes\n", data_size);
 
     if ((fd = fopen(cq->fn, "r+b"))) {
-        printf("_write_medium file open [SUCCESS]\n");
         uint32_t next_back = SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back;
         fseek(fd, next_back, SEEK_SET);
 
         // case 1: split elem size
         if (next_back + sizeof(data_size) > SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE) {
-            // TODO: test!!
             uint8_t buf[sizeof(data_size)];
             // transform data_size into byte array
             memcpy(buf, &data_size, sizeof(data_size));
             // write first part of data_size
-            printf("going to entail %d bytes\n", SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_back);
             nwritten = fwrite(buf, 1, SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_back, fd);
-            printf("entailed %d bytes\n", SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_back);
             // set seek to the first usable byte
             fseek(fd, SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET, SEEK_SET);
             // write the rest of data_size
-            printf("going to put in head %d bytes\n", sizeof(data_size) - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back)));
             nwritten += fwrite(&buf[SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back)], 1, 
                 sizeof(data_size) - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back)), fd);
-            printf("done with putting in head %d bytes\n", sizeof(data_size) - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back)));
             next_back = SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + sizeof(data_size) - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back));
         } else { // normal write
             nwritten = fwrite(&data_size, 1, sizeof(data_size), fd);
             next_back += sizeof(data_size);
         }
-        printf("_write_medium written %d bytes after elem size\n", nwritten);
-        delay(1000);
         // case 2: split elem data
         if (next_back + data_size > SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE) {
             nwritten += fwrite(data, 1, SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_back, fd);
@@ -269,8 +248,7 @@ uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uin
         } else { // normal write
             nwritten += fwrite(data, 1, data_size, fd);
         }
-        printf("_write_medium written %d bytes after elem data\n", nwritten);
-
+        
         fclose(fd);
     }
 
@@ -290,7 +268,6 @@ uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t *data_s
         // case 1: split elem size
         if (data_size) {
             if (next_front + sizeof(*data_size) > SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE) {
-                // TODO: test!!
                 uint8_t buf[sizeof(*data_size)];
                 // read first half
                 nread = fread(buf, 1, SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front), fd);
