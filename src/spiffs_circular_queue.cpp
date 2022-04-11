@@ -105,16 +105,17 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t * elem
     return ret;
 }
 
-uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq) {
+uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, uint8_t *elem, uint16_t *elem_size) {
     uint8_t ret = 0;
 
     if (!spiffs_circular_queue_is_empty(cq)) {
         // read last elem size
         uint16_t back_elem_size = 0;
-        if (_read_medium(cq, NULL, &back_elem_size)) {
+        if (_read_medium(cq, elem, &back_elem_size)) {
             // advance front index
             cq->front = (cq->front + sizeof(back_elem_size) + back_elem_size) % SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE;
             cq->count--;
+            if (elem_size) *elem_size = back_elem_size;
             _spiffs_circular_queue_persist(cq);
             ret = 1;
         }

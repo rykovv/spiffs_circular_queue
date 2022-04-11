@@ -56,13 +56,15 @@ uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t *elem, u
 uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t *elem, const uint16_t elem_size);
 
 /**
- *	Pops out the first element of the queue.
+ *	Pops out the first element of the queue. When elem and elem_size are valid pointers, front element is placed in them and then it pops out.
  *
  *  @param[in] cq 			Pointer to the circular_queue_t struct
+ *  @param[out] elem        Pointer to a queue element buffer
+ *  @param[out] elem_size   A queue element size
  * 
  *	@return					1 on success and 0 on fail
  */
-uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq);
+uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, uint8_t *elem = NULL, uint16_t *elem_size = NULL);
 
 /**
  *	Checks whether the queue is empty or not.
