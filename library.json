@@ -6,7 +6,7 @@
     "repository":
     {
       "type": "git",
-      "url": "https://github.com/rykovv/spiffs_circular_queue"
+      "url": "https://github.com/rykovv/spiffs_circular_queue.git"
     },
     "authors":
     [
