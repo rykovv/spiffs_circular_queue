@@ -120,7 +120,7 @@ uint32_t spiffs_circular_queue_get_back_indx(const circular_queue_t *cq);
  *
  *	@return					queue nodes count
  */
-uint32_t spiffs_circular_queue_get_count(const circular_queue_t *cq);
+uint16_t spiffs_circular_queue_get_count(const circular_queue_t *cq);
 
 /**
  *	Gets the queue SPIFFS file footprint in bytes
