@@ -15,7 +15,7 @@ Fixed header is used to keep track of queue pointers and especially useful when 
 
 It was carefully tested on ESP32 considering important general and corner cases. Such cases as split elem size or split elem data due to circular nature were working very fine. 
 
-Multiple instances of different queues can peacefully coexist. This is a tipical example. 
+Multiple instances of different queues can peacefully coexist. This is a typical example. 
 
 ```cpp
 #include <Arduino.h>
