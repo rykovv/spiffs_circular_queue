@@ -17,7 +17,7 @@ It was carefully tested on ESP32 considering important general and corner cases.
 
 Multiple instances of different queues can peacefully coexist. This is a tipical example. 
 
-```
+```cpp
 #include <Arduino.h>
 #include "spiffs_circular_queue.h"
 
