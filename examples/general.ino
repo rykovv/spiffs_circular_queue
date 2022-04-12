@@ -11,7 +11,8 @@ void send_data(void);
 void setup() {
     // very important point to get right filename
     //   queues are distinguished by filenames
-    snprintf(cq.fn, SPIFFS_FILE_NAME_MAX_SIZE, "spiffs/send_data");
+    //   Don't forget '/spiffs/' prefix!
+    snprintf(cq.fn, SPIFFS_FILE_NAME_MAX_SIZE, "/spiffs/send_data");
     if (spiffs_circular_queue_init(&cq)) {
         printf("spiffs_circular_queue_init [SUCCESS]\n");
     }

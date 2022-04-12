@@ -306,5 +306,5 @@ static uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t 
         fclose(fd);
     }
 
-    return (nread == (data_size? sizeof(uint16_t) : 0) + (data && data_size? *data_size : 0));
+    return (nread == (data_size? sizeof(*data_size) : 0) + (data && data_size? *data_size : 0));
 }
