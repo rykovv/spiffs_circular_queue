@@ -14,12 +14,7 @@
 
 #include <Arduino.h>
 
-typedef struct {
-    char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS.
-    uint32_t front = 0;                 ///< Queue front byte index
-    uint32_t back = 0;                  ///< Queue back byte index
-    uint16_t count = 0;                 ///< Queue nodes count
-} circular_queue_t;
+typedef struct _circular_queue_t circular_queue_t;
 
 #ifdef __cplusplus
 extern "C" {
