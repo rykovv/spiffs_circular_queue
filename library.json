@@ -19,6 +19,6 @@
     ],
     "license": "MIT",
     "homepage": "https://rykovv.github.io/spiffs_circular_queue/",
-    "frameworks": "*",
-    "platforms": "*"
+    "frameworks": "ESP-IDF",
+    "platforms": "espressif, arduino"
   }
