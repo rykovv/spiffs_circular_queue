@@ -21,31 +21,10 @@
 #define SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - \
                                             SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET)  ///< Max data size
 
-/// Main queue struct
-typedef struct _circular_queue_t {
-    char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS.
-    uint32_t front_idx = 0;             ///< Queue front byte index
-    uint32_t back_idx = 0;              ///< Queue back byte index
-    uint16_t count = 0;                 ///< Queue nodes count
-
-    // Function pointers to get oo flavour 
-    uint8_t (*front)(const circular_queue_t*, uint8_t*, uint16_t*);
-    uint8_t (*enqueue)(circular_queue_t*, const uint8_t*, const uint16_t);
-    uint8_t (*dequeue)(circular_queue_t*, uint8_t*, uint16_t*);
-    uint8_t (*is_empty)(const circular_queue_t*);
-    uint32_t (*size)(const circular_queue_t*);
-    uint32_t (*available_space)(const circular_queue_t*);
-    uint32_t (*get_front_idx)(const circular_queue_t*);
-    uint32_t (*get_back_idx)(const circular_queue_t*);
-    uint16_t (*get_count)(const circular_queue_t*);
-    uint32_t (*get_file_size)(const circular_queue_t*);
-    uint8_t (*free)(circular_queue_t*, uint8_t);
-} _circular_queue_t;
-
 /// private function to mount SPIFFS during initialization
-static uint8_t  _mount_spiffs(void);
+static uint8_t _mount_spiffs(void);
 /// private function to unmount SPIFFS when you don't need it, i.e. before going in a sleep mode
-static void     _unmount_spiffs(void);
+static uint8_t _unmount_spiffs(void);
 /// private function that adds write medium-independent abstraction
 static uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uint16_t data_size);
 /// private function that adds read medium-independent abstraction. data = NULL to read only the size of last elem
@@ -58,8 +37,6 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
 
     if (!esp_spiffs_mounted(NULL)) {
         ret = _mount_spiffs();
-    } else {
-        ret = 1;
     }
 
     if (ret) {
@@ -212,9 +189,9 @@ uint8_t spiffs_circular_queue_free(circular_queue_t *cq, const uint8_t unmount_s
     uint8_t ret = 0;
 
     if (!remove(cq->fn)) {
-        if (unmount_spiffs) _unmount_spiffs();
-        memset(cq, 0x0, sizeof(circular_queue_t));
         ret = 1;
+        if (unmount_spiffs) ret = _unmount_spiffs();
+        memset(cq, 0x0, sizeof(circular_queue_t));
     }
 
     return ret;
@@ -248,8 +225,8 @@ static uint8_t _mount_spiffs(void) {
     return (ret == ESP_OK);
 }
 
-static void _unmount_spiffs(void) {
-    esp_vfs_spiffs_unregister(NULL);
+static uint8_t _unmount_spiffs(void) {
+    return (esp_vfs_spiffs_unregister(NULL) == ESP_OK);
 }
 
 static uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, const uint16_t data_size) {
