@@ -16,12 +16,41 @@
 
 typedef struct _circular_queue_t circular_queue_t;
 
+/// Main queue struct
+typedef struct _circular_queue_t {
+    char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS. Mandatory prefix "/spiffs/"
+    uint32_t front_idx;             ///< Queue front byte index
+    uint32_t back_idx;              ///< Queue back byte index
+    uint16_t count;                 ///< Queue nodes count
+
+    // Function pointers to get oo flavour 
+    uint8_t (*front)(const circular_queue_t*, uint8_t*, uint16_t*);
+    uint8_t (*enqueue)(circular_queue_t*, const uint8_t*, const uint16_t);
+    uint8_t (*dequeue)(circular_queue_t*, uint8_t*, uint16_t*);
+    uint8_t (*is_empty)(const circular_queue_t*);
+    uint32_t (*size)(const circular_queue_t*);
+    uint32_t (*available_space)(const circular_queue_t*);
+    uint32_t (*get_front_idx)(const circular_queue_t*);
+    uint32_t (*get_back_idx)(const circular_queue_t*);
+    uint16_t (*get_count)(const circular_queue_t*);
+    uint32_t (*get_file_size)(const circular_queue_t*);
+    uint8_t (*free)(circular_queue_t*, uint8_t);
+} _circular_queue_t;
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
  *	Initializes the library creating/reading a spiffs data file. Sets current front, back, and count queue indices.
+ *
+ *  For non-volatile storages the initialization and re-initialization depend on the written queue data.
+ *  The library will set its indices and count variables to what is encounted on the medium or set to zeros
+ *  if found none. If you modify cq struct variables outside of the library, that will be lost if _persist 
+ *  function will not be called.
+ *  Initialization will result in failure only on null cq struct pointer, failure to mount SPIFFS, or failure
+ *  to write queue data file on SPIFFS.
  *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
  *
@@ -37,7 +66,7 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq);
  *  @param[out] elem_size   Pointer to a queue element size
  *	@return					1 on success and 0 on fail
  */
-uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t *elem, uint16_t *elem_size);
+uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t *elem = NULL, uint16_t *elem_size = NULL);
 
 /**
  *	Enqueues elem of elem_size size to the front of the queue.
@@ -48,7 +77,7 @@ uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t *elem, u
  *
  *	@return					1 on success and 0 on fail
  */
-uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t *elem, const uint16_t elem_size);
+uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t *elem = NULL, const uint16_t elem_size = 0);
 
 /**
  *	Pops out the first element of the queue. When elem and elem_size are valid pointers, front element is placed in them and then it pops out.
