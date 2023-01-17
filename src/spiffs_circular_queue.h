@@ -8,7 +8,6 @@
 #define __SPIFFS_CIRCULAR_QUEUE__H__
 
 #define SPIFFS_MAX_FILES_COUNT                    (3)    ///< Maximum queue files that could open at the same time.
-#define SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE       (4096) ///< Maximum file size for storing data, in bytes. Set your limit
 #define SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE       (256)  ///< Queue elem size upper limit.
 #define SPIFFS_FILE_NAME_MAX_SIZE                 (32)   ///< SPIFFS maximum allowable file name length
 
@@ -22,6 +21,8 @@ typedef struct _circular_queue_t {
     uint32_t front_idx;             ///< Queue front byte index
     uint32_t back_idx;              ///< Queue back byte index
     uint16_t count;                 ///< Queue nodes count
+
+    uint32_t max_size;              ///< Queue max data size in bytes
 
     // Function pointers to get oo flavour 
     uint8_t (*front)(const circular_queue_t*, uint8_t*, uint16_t*);

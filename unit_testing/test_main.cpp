@@ -66,6 +66,7 @@ void _makeseq(uint16_t n, uint8_t *arr, uint16_t arr_size);
 // Unit test functions definitions
 void set_up(void) {
     snprintf(cq.fn, SPIFFS_FILE_NAME_MAX_SIZE, CIRCULAR_QUEUE_NAME);
+    cq.max_size = 2048;
 
     if (spiffs_circular_queue_init(&cq)) {
         printf("--------------- Setup properly done.\n");
@@ -297,8 +298,7 @@ void spiffs_available_space(void) {
     _makeseq(SPIFFS_FULL_QUEUE_ELEM_SIZE, buf, SPIFFS_FULL_QUEUE_ELEM_SIZE+1);
     
     cq.enqueue(&cq, buf, SPIFFS_FULL_QUEUE_ELEM_SIZE);
-    uint32_t expected_available_space = (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (sizeof(uint32_t)*2 + sizeof(uint16_t))) - \
-                                        (SPIFFS_FULL_QUEUE_ELEM_SIZE + sizeof(uint16_t)) - \
+    uint32_t expected_available_space = cq.max_size - (SPIFFS_FULL_QUEUE_ELEM_SIZE + sizeof(uint16_t)) - \
                                         sizeof(uint16_t);
 
     assert_equal(expected_available_space, cq.available_space(&cq), "SPIFFS available_space function.");
@@ -353,6 +353,7 @@ void spiffs_full_queue(void) {
 void spiffs_make_two_queues(void) {
     circular_queue_t cq1;
     snprintf(cq1.fn, SPIFFS_FILE_NAME_MAX_SIZE, "/spiffs/test1");
+    cq.max_size = 1024;
     assert_equal(spiffs_circular_queue_init(&cq1), 1, "SPIFFS Make Two Queues. Just checking for two independent queues coexistance.");
     cq1.free(&cq1, 0); // set zero to unmount on tear_down
 }

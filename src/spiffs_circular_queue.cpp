@@ -32,10 +32,12 @@ static uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t 
 /// private function that saves current pointers to the queue file
 static uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq);
 
-uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
-    uint8_t ret = 1;
+static inline uint32_t _spiffs_circular_queue_full_size(const circular_queue_t *cq);
 
-    if (!esp_spiffs_mounted(NULL)) {
+uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
+    uint8_t ret = cq->max_size > 0;
+
+    if (ret && !esp_spiffs_mounted(NULL)) {
         ret = _mount_spiffs();
     }
 
@@ -110,7 +112,7 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t * elem
         spiffs_circular_queue_available_space(cq) >= elem_size) 
     {
         if (_write_medium(cq, elem, elem_size)) {
-            cq->back_idx = (cq->back_idx + sizeof(elem_size) + elem_size) % SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE;
+            cq->back_idx = (cq->back_idx + sizeof(elem_size) + elem_size) % cq->max_size;
             cq->count++;
             _spiffs_circular_queue_persist(cq);
             ret = 1;
@@ -128,7 +130,7 @@ uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, uint8_t *elem, uint1
         uint16_t back_elem_size = 0;
         if (_read_medium(cq, elem, &back_elem_size)) {
             // advance front_idx index
-            cq->front_idx = (cq->front_idx + sizeof(back_elem_size) + back_elem_size) % SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE;
+            cq->front_idx = (cq->front_idx + sizeof(back_elem_size) + back_elem_size) % cq->max_size;
             cq->count--;
             if (elem_size) *elem_size = back_elem_size;
             _spiffs_circular_queue_persist(cq);
@@ -149,9 +151,9 @@ uint32_t spiffs_circular_queue_size(const circular_queue_t *cq) {
     if (cq->back_idx > cq->front_idx) {
         qsize = cq->back_idx - cq->front_idx - cq->count*sizeof(uint16_t);
     } else if (cq->back_idx < cq->front_idx) {
-        qsize = SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE - cq->front_idx + cq->back_idx - cq->count*sizeof(uint16_t);
+        qsize = cq->max_size - cq->front_idx + cq->back_idx - cq->count*sizeof(uint16_t);
     } else if (cq->count) { // && indices are equal
-        qsize = SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE - cq->count*sizeof(uint16_t);
+        qsize = cq->max_size - cq->count*sizeof(uint16_t);
     }
 
     return qsize;
@@ -162,7 +164,7 @@ uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq) {
     //   to be enqueued.
     // not upper limited by the SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE.
     //   Check this value to see max elem size you can enqueue.
-    uint32_t gross_available_space = SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE - 
+    uint32_t gross_available_space = cq->max_size - 
                                 (spiffs_circular_queue_size(cq) + cq->count*sizeof(uint16_t));
     return gross_available_space <= sizeof(uint16_t) ? 0 : gross_available_space - sizeof(uint16_t);
 }
@@ -239,28 +241,28 @@ static uint8_t _write_medium(const circular_queue_t *cq, const uint8_t *data, co
         fseek(fd, next_back_idx, SEEK_SET);
 
         // case 1: split elem size
-        if (next_back_idx + sizeof(data_size) > SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE) {
+        if (next_back_idx + sizeof(data_size) > _spiffs_circular_queue_full_size(cq)) {
             uint8_t buf[sizeof(data_size)];
             // transform data_size into byte array
             memcpy(buf, &data_size, sizeof(data_size));
             // write first part of data_size
-            nwritten = fwrite(buf, 1, SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_back_idx, fd);
+            nwritten = fwrite(buf, 1, _spiffs_circular_queue_full_size(cq) - next_back_idx, fd);
             // set seek to the first usable byte
             fseek(fd, SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET, SEEK_SET);
             // write the rest of data_size
-            nwritten += fwrite(&buf[SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back_idx)], 1, 
-                sizeof(data_size) - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back_idx)), fd);
-            next_back_idx = SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + sizeof(data_size) - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->back_idx));
+            nwritten += fwrite(&buf[cq->max_size - cq->back_idx], 1, 
+                sizeof(data_size) - (cq->max_size - cq->back_idx), fd);
+            next_back_idx = SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + sizeof(data_size) - (cq->max_size - cq->back_idx);
         } else { // normal write
             nwritten = fwrite(&data_size, 1, sizeof(data_size), fd);
             next_back_idx += sizeof(data_size);
         }
         // case 2: split elem data
-        if (next_back_idx + data_size > SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE) {
-            nwritten += fwrite(data, 1, SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_back_idx, fd);
+        if (next_back_idx + data_size > _spiffs_circular_queue_full_size(cq)) {
+            nwritten += fwrite(data, 1, _spiffs_circular_queue_full_size(cq) - next_back_idx, fd);
             fseek(fd, SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET, SEEK_SET);
-            nwritten += fwrite(&data[SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_back_idx], 1, 
-                data_size - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_back_idx), fd);
+            nwritten += fwrite(&data[_spiffs_circular_queue_full_size(cq) - next_back_idx], 1, 
+                data_size - (_spiffs_circular_queue_full_size(cq) - next_back_idx), fd);
         } else { // normal write
             nwritten += fwrite(data, 1, data_size, fd);
         }
@@ -283,18 +285,17 @@ static uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t 
 
         // case 1: split elem size
         if (data_size) {
-            if (next_front_idx + sizeof(*data_size) > SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE) {
+            if (next_front_idx + sizeof(*data_size) > _spiffs_circular_queue_full_size(cq)) {
                 uint8_t buf[sizeof(*data_size)];
                 // read first half
-                nread = fread(buf, 1, SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front_idx), fd);
+                nread = fread(buf, 1, cq->max_size - cq->front_idx, fd);
                 // set seek to the first usable byte
                 fseek(fd, SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET, SEEK_SET);
                 // read the rest of size
-                nread += fread(&buf[SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front_idx)], 1, 
-                    sizeof(*data_size) - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front_idx)), fd);
+                nread += fread(&buf[cq->max_size - cq->front_idx], 1, sizeof(*data_size) - (cq->max_size - cq->front_idx), fd);
                 // transform read by bytes data_size into uint16_t
                 memcpy(data_size, buf, sizeof(*data_size));
-                next_front_idx = SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + sizeof(*data_size) - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - (SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + cq->front_idx));
+                next_front_idx = SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET + sizeof(*data_size) - (cq->max_size - cq->front_idx);
             } else { // normal read
                 nread = fread(data_size, 1, sizeof(*data_size), fd);
                 next_front_idx += sizeof(*data_size);
@@ -303,13 +304,13 @@ static uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t 
 
         if (data) {
             // case 2: split elem data
-            if (next_front_idx + *data_size > SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE) {
-                nread += fread(data, 1, SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_front_idx, fd);
+            if (next_front_idx + *data_size > _spiffs_circular_queue_full_size(cq)) {
+                nread += fread(data, 1, _spiffs_circular_queue_full_size(cq) - next_front_idx, fd);
                 // set seek to the first usable byte
                 fseek(fd, SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET, SEEK_SET);
                 // read the rest of data
-                nread += fread(&data[SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_front_idx], 1, 
-                    *data_size - (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - next_front_idx), fd);
+                nread += fread(&data[_spiffs_circular_queue_full_size(cq) - next_front_idx], 1, 
+                    *data_size - (_spiffs_circular_queue_full_size(cq) - next_front_idx), fd);
             } else { // normal read
                 nread += fread(data, 1, *data_size, fd);
             }
@@ -319,4 +320,8 @@ static uint8_t _read_medium(const circular_queue_t *cq, uint8_t *data, uint16_t 
     }
 
     return (nread == (data_size? sizeof(*data_size) : 0) + (data && data_size? *data_size : 0));
+}
+
+static inline uint32_t _spiffs_circular_queue_full_size(const circular_queue_t *cq) {
+    return (cq->max_size + SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET);
 }
