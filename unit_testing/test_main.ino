@@ -20,7 +20,7 @@
  *      6) [done] Dequeue empty queue
  *      7) Dequeue non-empty queue
  *          (a) [done] normal
- *          (c) foreach_pop (next release)
+ *          (c) foreach_dequeue (next release)
  *      8) Traverse. foreach (next release)
  *      9) [done] Make two queues 
  *      10) [done] size function
@@ -278,6 +278,52 @@ void spiffs_dequeue_nonempty(void) {
     printf("        Expected/Real (%d/%d)\n", expc_sum, real_sum);
 }
 
+void spiffs_dequeue_nonempty_foreach(void) {
+    uint8_t buf[CIRCULAR_QUEUE_MAX_ELEM_SIZE +1];
+    uint16_t buf_size = 0;
+    uint32_t expc_sum = 0;
+    uint32_t real_sum = 0;
+    uint16_t n = 1;
+
+    while(cq.available_space(&cq) >= n) {
+        _makeseq(n, buf, CIRCULAR_QUEUE_MAX_ELEM_SIZE+1);
+        if (cq.enqueue(&cq, buf, n)) {
+            for (uint16_t i = 0; i < n; i++) {
+                expc_sum += buf[i];
+            }
+        } else {
+            printf("Failed on enqueuing1q; %dth element. Queue size is %d\n", n, cq.size(&cq));
+        }
+
+        if (n == CIRCULAR_QUEUE_MAX_ELEM_SIZE) {
+            n = 1;
+        } else {
+            n++;
+        }
+    }
+    // here the queue is full, thus the file size is or close to max. 
+    //   need to dequeue a couple of elems
+    
+    uint16_t halfcount = cq.get_count(&cq)/2;
+    uint32_t tmp_sum = 0;
+    for (uint16_t i = 0; i < halfcount; i++) {
+        cq.dequeue(&cq, buf, &buf_size);
+        for (uint16_t j = 0; j < buf_size; j++) {
+            tmp_sum += buf[j];
+        }
+    }
+    expc_sum -= tmp_sum;
+
+    spiffs_circular_queue_foreach_dequeue(&cq, buf, buf_size) {
+        for (uint16_t i = 0; i < buf_size; i++) {
+            real_sum += buf[i];
+        };
+    }
+
+    assert_equal(expc_sum, real_sum, "SPIFFS Dequeue Non-Empty Foreach. Enqueued elements until full, dequeue half queue, enqueue again until full, and check checksum.");
+    printf("        Expected/Real (%d/%d)\n", expc_sum, real_sum);
+}
+
 void spiffs_size(void) {
     uint8_t buf[SPIFFS_FULL_QUEUE_ELEM_SIZE+1];
     uint16_t enqueued_bytes = 0;
@@ -379,6 +425,8 @@ void loop() {
     run_test(spiffs_dequeue_empty);
     delay(500);
     run_test(spiffs_dequeue_nonempty);
+    delay(500);
+    run_test(spiffs_dequeue_nonempty_foreach);
     delay(500);
     run_test(spiffs_size);
     delay(500);

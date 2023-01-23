@@ -38,6 +38,18 @@ typedef struct _circular_queue_t {
     uint8_t (*free)(circular_queue_t*, uint8_t);
 } _circular_queue_t;
 
+/**
+ *	Macro that resembles foreach loop behaviour. Pops out the last queue elem
+ *  each loop cycle until the queue is empty.
+ *
+ *	@param[in] cq 			Pointer to the circular_queue_t struct
+ *	@param[out] elem 		Pointer to a queue element buffer
+ *  @param[out] elem_size   Pointer to a queue element size
+ * 
+ */ 
+#define spiffs_circular_queue_foreach_dequeue(cq, elem, elem_size)      \
+    while (spiffs_circular_queue_dequeue(cq, elem, &elem_size))         \
+
 
 #ifdef __cplusplus
 extern "C" {
