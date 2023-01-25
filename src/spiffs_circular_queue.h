@@ -7,6 +7,7 @@
 #ifndef __SPIFFS_CIRCULAR_QUEUE__H__
 #define __SPIFFS_CIRCULAR_QUEUE__H__
 
+#define CIRCULAR_QUEUE_BUFFERED
 #define SPIFFS_MAX_FILES_COUNT                    (3)    ///< Maximum queue files that could open at the same time.
 #define SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE       (256)  ///< Queue elem size upper limit.
 #define SPIFFS_FILE_NAME_MAX_SIZE                 (32)   ///< SPIFFS maximum allowable file name length
@@ -15,16 +16,41 @@
 
 typedef struct _circular_queue_t circular_queue_t;
 
+typedef enum {
+    SPIFFS,
+    SPIFFS_BUFFERED,
+    // implemeted so far
+    EEPROM,
+    EEPROM_BUFFERED,
+    RAM
+} circular_queue_type_t;
+
+#ifdef CIRCULAR_QUEUE_BUFFERED
+typedef struct _circular_queue_buffer {
+    uint8_t *qb;                    ///< Pointer to the queue buffer data
+    uint16_t size;                  ///< Buffer size
+    uint32_t offset;                ///< Queue offset for most recent buffer mapping
+} circular_queue_buffer_t;
+#endif
+
 /// Main queue struct
 typedef struct _circular_queue_t {
-    char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS. Mandatory prefix "/spiffs/"
+    circular_queue_type_t queue_type;
+
     uint32_t front_idx;             ///< Queue front byte index
     uint32_t back_idx;              ///< Queue back byte index
     uint16_t count;                 ///< Queue nodes count
 
     uint32_t max_size;              ///< Queue max data size in bytes
 
-    // Function pointers to get oo flavour 
+#ifdef CIRCULAR_QUEUE_BUFFERED
+    circular_queue_buffer_t buffer; ///< Queue buffer struct if BUFFERED
+#endif
+
+    // Media-depended members
+    char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS. Mandatory prefix "/spiffs/"
+
+    // Function pointers to get oop flavour 
     uint8_t (*front)(const circular_queue_t*, uint8_t*, uint16_t*);
     uint8_t (*enqueue)(circular_queue_t*, const uint8_t*, const uint16_t);
     uint8_t (*dequeue)(circular_queue_t*, uint8_t*, uint16_t*);
@@ -37,6 +63,7 @@ typedef struct _circular_queue_t {
     uint32_t (*get_file_size)(const circular_queue_t*);
     uint8_t (*free)(circular_queue_t*, uint8_t);
 } _circular_queue_t;
+
 
 /**
  *	Macro that resembles foreach loop behaviour. Pops out the last queue elem

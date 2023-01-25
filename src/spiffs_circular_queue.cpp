@@ -42,6 +42,10 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
     }
 
     if (ret) {
+#ifdef CIRCULAR_QUEUE_BUFFERED
+        cq->buffer.qb = (uint8_t *) malloc(sizeof(uint8_t)*cq->buffer.size);
+#endif
+
         struct stat sb;
         FILE *fd = NULL;
 
@@ -51,6 +55,10 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
                 cq->front_idx = 0;
                 cq->back_idx = 0;
                 cq->count = 0;
+
+#ifdef CIRCULAR_QUEUE_BUFFERED
+                cq->buffer.offset = 0;
+#endif
                 
                 // set front and back indices in the file's head
                 uint8_t nwritten = fwrite(&(cq->front_idx), 1, sizeof(cq->front_idx), fd);
@@ -69,6 +77,10 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
                 nread += fread(&(cq->back_idx), 1, sizeof(cq->back_idx), fd);
                 nread += fread(&(cq->count), 1, sizeof(cq->count), fd);
                 if (nread != SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET) ret = 0;
+
+#ifdef CIRCULAR_QUEUE_BUFFERED
+                cq->buffer.offset = cq->front_idx;
+#endif
 
                 fclose(fd);
             } else {
@@ -89,6 +101,12 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
         cq->get_count = spiffs_circular_queue_get_count;
         cq->get_file_size = spiffs_circular_queue_get_file_size;
         cq->free = spiffs_circular_queue_free;
+
+#ifdef CIRCULAR_QUEUE_BUFFERED
+        _read_medium(cq, cq->buffer.qb, );
+        cq->buffer.offset = cq->front_idx;
+        cq->buffer.valid = cq->size(cq) > cq->buffer.size ? cq->buffer.size : cq->size(cq);
+#endif
     }
 
     return ret;
