@@ -8,7 +8,7 @@
 #define __SPIFFS_CIRCULAR_QUEUE__H__
 
 #define SPIFFS_MAX_FILES_COUNT                    (3)    ///< Maximum queue files that could open at the same time.
-#define SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE       (256)  ///< Queue elem size upper limit.
+#define SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE       (0)    ///< Queue elem size upper limit. 0 if disabled
 #define SPIFFS_FILE_NAME_MAX_SIZE                 (32)   ///< SPIFFS maximum allowable file name length
 
 #include <Arduino.h>
@@ -84,6 +84,9 @@ uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t *elem = 
 /**
  *	Enqueues elem of elem_size size to the front of the queue.
  *
+ *  Be responsible for passing elem buffer of SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE size or less 
+ *  if SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE is enabled
+ *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
  *	@param[out] elem 		Pointer to a queue element buffer
  *  @param[out] elem_size   A queue element size
@@ -127,6 +130,11 @@ uint32_t spiffs_circular_queue_size(const circular_queue_t *cq);
 
 /**
  *	Returns queue available space in bytes.
+ *
+ *  Allows to return a real estimate for the next element to be enqueued.
+ *  Caution: not upper limited by the SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE.
+ *  Check SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE value to see max elem size 
+ *  you can enqueue if enabled.
  *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
  *

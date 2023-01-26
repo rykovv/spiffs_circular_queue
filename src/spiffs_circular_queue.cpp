@@ -10,7 +10,7 @@
 #include "sys/stat.h"
 #include "esp_spiffs.h"
 #else
-#error Library designed to work with ESP32-IDE and x-tensa toolchain 
+#error Library designed to work with ESP32 arch and x-tensa toolchain 
 #endif
 
 #define SPIFFS_CIRCULAR_QUEUE_HEAD_FRONT    (0)                     ///< Front index file offset
@@ -18,8 +18,6 @@
 #define SPIFFS_CIRCULAR_QUEUE_HEAD_COUNT    (sizeof(uint16_t))      ///< Elements count file offset
 #define SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET   (sizeof(uint32_t)*2 + \
                                              sizeof(uint16_t))      ///< Data location file offset
-#define SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE (SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE - \
-                                            SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET)  ///< Max data size
 
 /// private function to mount SPIFFS during initialization
 static uint8_t _mount_spiffs(void);
@@ -94,7 +92,6 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
     return ret;
 }
 
-// Be responsible for passing elem of SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE
 uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t *elem, uint16_t *elem_size) {
     uint8_t ret = 0;
 
@@ -108,9 +105,10 @@ uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, uint8_t *elem, u
 uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const uint8_t * elem, const uint16_t elem_size) {
     uint8_t ret = 0;
 
-    if (elem_size > 0 && elem_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE &&
-        spiffs_circular_queue_available_space(cq) >= elem_size) 
-    {
+    if (spiffs_circular_queue_available_space(cq) >= elem_size && elem_size > 0 &&
+        (!SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE ||
+        (SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE && elem_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE))
+    ) {
         if (_write_medium(cq, elem, elem_size)) {
             cq->back_idx = (cq->back_idx + sizeof(elem_size) + elem_size) % cq->max_size;
             cq->count++;
@@ -160,10 +158,6 @@ uint32_t spiffs_circular_queue_size(const circular_queue_t *cq) {
 }
 
 uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq) {
-    // allows to return a real estimate for the next element 
-    //   to be enqueued.
-    // not upper limited by the SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE.
-    //   Check this value to see max elem size you can enqueue.
     uint32_t gross_available_space = cq->max_size - 
                                 (spiffs_circular_queue_size(cq) + cq->count*sizeof(uint16_t));
     return gross_available_space <= sizeof(uint16_t) ? 0 : gross_available_space - sizeof(uint16_t);
