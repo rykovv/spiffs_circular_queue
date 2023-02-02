@@ -10,32 +10,51 @@
 
 /*
  *  Test cases:
- *      1) [done] Empty queue
- *          (a) [done] init
- *          (b) [done] double init failure
- *      2) [done] Non-empty queue 
- *      3) [done] Enqueuing element larger than available space
- *      4) [done] Full queue
- *      5) [done] Wrap around behavior
- *      6) [done] Dequeue empty queue
- *      7) Dequeue non-empty queue
- *          (a) [done] normal
- *          (c) foreach_dequeue (next release)
- *      8) Traverse. foreach (next release)
- *      9) [done] Make two queues 
- *      10) [done] size function
- *      11) available_space function
- *      12) [done] get_count function
- *      13) [done] front function
- *      14) [done] is_empty function
- *      15) 
- *      ...
- *      n-4) dequeue to empty implicitly done many times in present test cases
- *      n-3) enqueue and dequeue functions are implicitly tested
- *      n-2) get front and back indices functions are implicitely tested
- *      n-1) get_file_size is not relevant to functionality. Not necessary to test
- *      n) free is tested every time in tear_down
- * 
+ *      I) Variable size queue
+ *          1) [done] Empty queue
+ *              (a) [done] init
+ *              (b) [done] double init failure
+ *          2) [done] Non-empty queue 
+ *          3) [done] Enqueuing element larger than available space
+ *          4) [done] Full queue
+ *          5) [done] Wrap around behavior
+ *          6) [done] Dequeue empty queue
+ *          7) Dequeue non-empty queue
+ *              (a) [done] normal
+ *              (c) foreach_dequeue (next release)
+ *          8) Traverse. foreach (not implemented. value vs complexity)
+ *          9) [done] Make two queues 
+ *          10) [done] size function
+ *          11) [done] available_space function
+ *          12) [done] get_count function
+ *          13) [done] front function
+ *          14) [done] is_empty function
+ *          15) 
+ *          ...
+ *          n-4) dequeue to empty implicitly done many times in present test cases
+ *          n-3) enqueue and dequeue functions are implicitly tested
+ *          n-2) get front and back indices functions are implicitely tested
+ *          n-1) get_file_size is not relevant to functionality. Not necessary to test
+ *          n) free is tested every time in tear_down
+ *      I) Fixed size queue
+ *          1) Empty queue
+ *              (a) init
+ *              (b) double init failure
+ *          2) Non-empty queue 
+ *          3) Enqueuing element larger than available space
+ *          4) Full queue
+ *          5) Wrap around behavior
+ *          6) Dequeue empty queue
+ *          7) Dequeue non-empty queue
+ *              (a) normal
+ *              (c) foreach_dequeue (next release)
+ *          8) Traverse. foreach (next release)
+ *          9) Make two queues 
+ *          10) size function
+ *          11) available_space function
+ *          12) get_count function
+ *          13) front function
+ *          14) is_empty function
  * 
  *  Each test case must be tested on every medium (SPIFFS, EEPROM, RAM)
 */
@@ -66,7 +85,6 @@ void _makeseq(uint16_t n, uint8_t *arr, uint16_t arr_size);
 // Unit test functions definitions
 void set_up(void) {
     snprintf(cq.fn, SPIFFS_FILE_NAME_MAX_SIZE, CIRCULAR_QUEUE_NAME);
-    cq.max_size = 2048;
 
     if (spiffs_circular_queue_init(&cq)) {
         printf("--------------- Setup properly done.\n");
@@ -109,15 +127,15 @@ void _makeseq(uint16_t n, uint8_t *arr, uint16_t arr_size) {
 
 // SPIFFS medium test cases
 
-void spiffs_empty_queue_init(void) {
+void spiffs_empty_queue_init_variable(void) {
     assert_equal(cq.front_idx | cq.back_idx | cq.count | cq.size(&cq), 0, "SPIFFS Empty Queue Init. struct variables checked.");
 }
 
-void spiffs_empty_queue_double_init(void) {
+void spiffs_empty_queue_double_init_variable(void) {
     assert_equal(spiffs_circular_queue_init(&cq), 1, "SPIFFS Empty Queue Double Init. Reinitialization is fine and must be controlled by the user.");
 }
 
-void spiffs_non_empty_queue(void) {
+void spiffs_non_empty_queue_variable(void) {
     uint8_t buf[CIRCULAR_QUEUE_MAX_ELEM_SIZE +1];
     uint16_t buf_size = 0;
     uint32_t expc_sum = 0;
@@ -146,7 +164,7 @@ void spiffs_non_empty_queue(void) {
 }
 
 #define SPIFFS_FULL_QUEUE_ELEM_SIZE 255
-void spiffs_enqueueing_elem_larger_than_available_space(void) {
+void spiffs_enqueueing_elem_larger_than_available_space_variable(void) {
     uint8_t buf[SPIFFS_FULL_QUEUE_ELEM_SIZE+1];
 
     _makeseq(SPIFFS_FULL_QUEUE_ELEM_SIZE, buf, SPIFFS_FULL_QUEUE_ELEM_SIZE+1);
@@ -159,7 +177,7 @@ void spiffs_enqueueing_elem_larger_than_available_space(void) {
 }
 
 // takes a while
-void spiffs_wrap_around(void) {
+void spiffs_wrap_around_variable(void) {
     uint8_t buf[CIRCULAR_QUEUE_MAX_ELEM_SIZE +1];
     uint16_t buf_size = 0;
     uint32_t expc_sum = 0;
@@ -224,14 +242,14 @@ void spiffs_wrap_around(void) {
     printf("        Expected/Real (%d/%d)\n", expc_sum, real_sum);
 }
 
-void spiffs_dequeue_empty(void) {
+void spiffs_dequeue_empty_variable(void) {
     uint8_t buf[CIRCULAR_QUEUE_MAX_ELEM_SIZE +1];
     uint16_t buf_size = 0;
 
     assert_equal(0, cq.dequeue(&cq, buf, &buf_size), "SPIFFS Dequeue Empty. Failure Expected.");
 }
 
-void spiffs_dequeue_nonempty(void) {
+void spiffs_dequeue_nonempty_variable(void) {
     uint8_t buf[CIRCULAR_QUEUE_MAX_ELEM_SIZE +1];
     uint16_t buf_size = 0;
     uint32_t expc_sum = 0;
@@ -278,7 +296,7 @@ void spiffs_dequeue_nonempty(void) {
     printf("        Expected/Real (%d/%d)\n", expc_sum, real_sum);
 }
 
-void spiffs_dequeue_nonempty_foreach(void) {
+void spiffs_dequeue_nonempty_foreach_variable(void) {
     uint8_t buf[CIRCULAR_QUEUE_MAX_ELEM_SIZE +1];
     uint16_t buf_size = 0;
     uint32_t expc_sum = 0;
@@ -324,7 +342,7 @@ void spiffs_dequeue_nonempty_foreach(void) {
     printf("        Expected/Real (%d/%d)\n", expc_sum, real_sum);
 }
 
-void spiffs_size(void) {
+void spiffs_size_variable(void) {
     uint8_t buf[SPIFFS_FULL_QUEUE_ELEM_SIZE+1];
     uint16_t enqueued_bytes = 0;
 
@@ -338,7 +356,7 @@ void spiffs_size(void) {
     assert_equal(enqueued_bytes, cq.size(&cq), "SPIFFS size function. Enqueueing elems until full, counting enqueued bytes. Compare with size function.");
 }
 
-void spiffs_available_space(void) {
+void spiffs_available_space_variable(void) {
     uint8_t buf[SPIFFS_FULL_QUEUE_ELEM_SIZE+1];
 
     _makeseq(SPIFFS_FULL_QUEUE_ELEM_SIZE, buf, SPIFFS_FULL_QUEUE_ELEM_SIZE+1);
@@ -351,7 +369,7 @@ void spiffs_available_space(void) {
     printf("      Expected/Read (%d/%d)\n", expected_available_space, cq.available_space(&cq));
 }
 
-void spiffs_get_count(void) {
+void spiffs_get_count_variable(void) {
     uint8_t buf[SPIFFS_FULL_QUEUE_ELEM_SIZE+1];
 
     _makeseq(SPIFFS_FULL_QUEUE_ELEM_SIZE, buf, SPIFFS_FULL_QUEUE_ELEM_SIZE+1);
@@ -363,7 +381,7 @@ void spiffs_get_count(void) {
     assert_equal(3, cq.get_count(&cq), "SPIFFS get_count function. Enqueue 3 elems, then check with get_count.");
 }
 
-void spiffs_front(void) {
+void spiffs_front_variable(void) {
     uint8_t buf[SPIFFS_FULL_QUEUE_ELEM_SIZE+1];
     uint8_t fbuf[SPIFFS_FULL_QUEUE_ELEM_SIZE+1];
     uint16_t fbuf_size = 0;
@@ -380,11 +398,11 @@ void spiffs_front(void) {
     assert_equal(0, memcmp(buf, fbuf, SPIFFS_FULL_QUEUE_ELEM_SIZE), "SPIFFS front function. Enqueue 3 elems, then do memcmp with expected first elem.");
 }
 
-void spiffs_is_empty(void) {
+void spiffs_is_empty_variable(void) {
     assert_equal(1, cq.is_empty(&cq), "SPIFFS is_empty function. Check on a recently initialized queue.");
 }
 
-void spiffs_full_queue(void) {
+void spiffs_full_queue_variable(void) {
     uint8_t buf[SPIFFS_FULL_QUEUE_ELEM_SIZE+1];
 
     _makeseq(SPIFFS_FULL_QUEUE_ELEM_SIZE, buf, SPIFFS_FULL_QUEUE_ELEM_SIZE+1);
@@ -396,7 +414,7 @@ void spiffs_full_queue(void) {
     assert_equal(1, !cq.is_empty(&cq) && cq.available_space(&cq) < SPIFFS_FULL_QUEUE_ELEM_SIZE, "SPIFFS Full Queue. Filling the queue until it's full.");
 }
 
-void spiffs_make_two_queues(void) {
+void spiffs_make_two_queues_variable(void) {
     circular_queue_t cq1;
     snprintf(cq1.fn, SPIFFS_FILE_NAME_MAX_SIZE, "/spiffs/test1");
     cq.max_size = 1024;
@@ -410,35 +428,44 @@ void setup() {
 }
 
 void loop() {
-    run_test(spiffs_empty_queue_init);
+    printf("Testing Variable Size Queue\n");
+    cq.elem_size = 0;
+
+    run_test(spiffs_empty_queue_init_variable);
     delay(500);
-    run_test(spiffs_empty_queue_double_init);
+    run_test(spiffs_empty_queue_double_init_variable);
     delay(500);
-    run_test(spiffs_non_empty_queue);
+    run_test(spiffs_non_empty_queue_variable);
     delay(500);
-    run_test(spiffs_make_two_queues);
+    run_test(spiffs_make_two_queues_variable);
     delay(500);
-    run_test(spiffs_full_queue);
+    run_test(spiffs_full_queue_variable);
     delay(500);
-    run_test(spiffs_wrap_around);
+    run_test(spiffs_wrap_around_variable);
     delay(500);
-    run_test(spiffs_dequeue_empty);
+    run_test(spiffs_dequeue_empty_variable);
     delay(500);
-    run_test(spiffs_dequeue_nonempty);
+    run_test(spiffs_dequeue_nonempty_variable);
     delay(500);
-    run_test(spiffs_dequeue_nonempty_foreach);
+    run_test(spiffs_dequeue_nonempty_foreach_variable);
     delay(500);
-    run_test(spiffs_size);
+    run_test(spiffs_size_variable);
     delay(500);
-    run_test(spiffs_available_space);
+    run_test(spiffs_available_space_variable);
     delay(500);
-    run_test(spiffs_dequeue_empty);
+    run_test(spiffs_dequeue_empty_variable);
     delay(500);
-    run_test(spiffs_get_count);
+    run_test(spiffs_get_count_variable);
     delay(500);
-    run_test(spiffs_front);
+    run_test(spiffs_front_variable);
     delay(500);
-    run_test(spiffs_is_empty);
+    run_test(spiffs_is_empty_variable);
     delay(500);
+    
+    // printf("Testing Fixed Size Queue\n");
+    // cq.elem_size = sizeof(uint32_t);
+    
+
+
     printf("\n\n");
 }
