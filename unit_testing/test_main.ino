@@ -70,12 +70,12 @@
 #define CIRCULAR_QUEUE_MAX_ELEM_SIZE    80 // will fill ~3500 bytes in variable elem size
 
 typedef enum {
-    TEST_TYPE_VARIABLE_ELEM_SIZE = 0,
-    TEST_TYPE_FIXED_ELEM_SIZE,
+    TEST_TYPE_SPIFFS_VARIABLE_ELEM_SIZE = 0,
+    TEST_TYPE_SPIFFS_FIXED_ELEM_SIZE,
 } test_type_t;
 
 circular_queue_t cq;
-test_type_t test_type = TEST_TYPE_VARIABLE_ELEM_SIZE;
+test_type_t test_type = TEST_TYPE_SPIFFS_VARIABLE_ELEM_SIZE;
 
 // Unit test functions declarations
 void set_up(void);
@@ -85,17 +85,20 @@ void run_test(void (* test)(void));
 
 // data generation function declaration
 void _makeseq(uint16_t n, uint8_t *arr, uint16_t arr_size);
-
+void _infloop(void);
 
 // Unit test functions definitions
 void set_up(void) {
     snprintf(cq.fn, SPIFFS_FILE_NAME_MAX_SIZE, CIRCULAR_QUEUE_NAME);
+
     switch (test_type) {
-        case TEST_TYPE_VARIABLE_ELEM_SIZE :
+        case TEST_TYPE_SPIFFS_VARIABLE_ELEM_SIZE :
+            cq.flags.fields.queue_type = CIRCULAR_QUEUE_TYPE_SPIFFS;
             cq.elem_size = 0;
             cq.max_size = CIRCULAR_QUEUE_DEFAULT_MAX_SIZE;
         break;
-        case TEST_TYPE_FIXED_ELEM_SIZE : 
+        case TEST_TYPE_SPIFFS_FIXED_ELEM_SIZE :
+            cq.flags.fields.queue_type = CIRCULAR_QUEUE_TYPE_SPIFFS; 
             cq.elem_size = sizeof(uint32_t);
             cq.max_size = 512;
         break;
@@ -122,6 +125,7 @@ void assert_equal(unsigned expected, unsigned actual, const char *message) {
         printf("[PASS]: %s\n", message);
     } else {
         printf("[FAIL]: %s\n", message);
+        _infloop();
     }
 }
 
@@ -136,6 +140,10 @@ void _makeseq(uint16_t n, uint8_t *arr, uint16_t arr_size) {
     for (uint16_t i = 1; i <= n && i < arr_size; i++) {
         arr[i] = i;
     }
+}
+
+void _infloop(void) {
+    for(;;);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -677,7 +685,7 @@ void setup() {
 }
 
 void loop() {
-    test_type = TEST_TYPE_VARIABLE_ELEM_SIZE;
+    test_type = TEST_TYPE_SPIFFS_VARIABLE_ELEM_SIZE;
     printf("Testing Variable Size Queue\n");
 
     run_test(spiffs_empty_queue_init_variable);
@@ -712,7 +720,7 @@ void loop() {
     delay(500);
 
     printf("\n\n");
-    test_type = TEST_TYPE_FIXED_ELEM_SIZE;
+    test_type = TEST_TYPE_SPIFFS_FIXED_ELEM_SIZE;
     printf("Testing Fixed Size Queue\n");
 
     run_test(spiffs_empty_queue_init_fixed);

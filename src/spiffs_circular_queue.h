@@ -16,6 +16,21 @@
 
 typedef struct _circular_queue_t circular_queue_t;
 
+/// Queue types enum, it will go populating with the development of the project
+typedef enum {
+    CIRCULAR_QUEUE_TYPE_SPIFFS = 0,
+} circular_queue_type_t;
+
+/// Union with a bitfield for easy access to queue flags
+typedef union {
+    struct {
+        unsigned char queue_type        : 4;
+        unsigned char reserved          : 3;
+        unsigned char fixed_elem_size   : 1;
+    } fields;
+    unsigned char value;
+} circular_queue_flags_t;
+
 /// Main queue struct
 typedef struct _circular_queue_t {
     char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS. Mandatory prefix "/spiffs/"
@@ -25,6 +40,8 @@ typedef struct _circular_queue_t {
 
     uint32_t max_size;              ///< Queue max data size in bytes
     uint16_t elem_size;             ///< Queue fixed elem size in bytes
+
+    circular_queue_flags_t flags;   ///< Flags for queue type, fixed elem size, etc
 
     // Function pointers to get oo flavour 
     uint8_t (*front)(const circular_queue_t*, void*, uint16_t*);
