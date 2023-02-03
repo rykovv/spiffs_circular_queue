@@ -13,7 +13,6 @@
 #error Library designed to work with ESP32 arch and x-tensa toolchain 
 #endif
 
-#define CIRCULAR_QUEUE_DEFAULT_MAX_SIZE     (2048u)                 ///< Default queue max size in bytes
 #define SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET   (sizeof(uint32_t)*3 + \
                                              sizeof(uint16_t)*2)    ///< Data location file offset
 
@@ -116,15 +115,16 @@ uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, void *elem, uint
 
 uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const void *elem, const uint16_t elem_size) {
     uint8_t ret = 0;
+    uint32_t enqueue_size = cq->elem_size? cq->elem_size : elem_size;
 
-    if (elem_size && spiffs_circular_queue_available_space(cq) >= elem_size &&
+    if (enqueue_size && spiffs_circular_queue_available_space(cq) >= enqueue_size &&
         (!SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE ||
-        (SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE && elem_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE))
+        (SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE && enqueue_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE))
     ) {
         if (_write_medium(cq, elem, elem_size)) {
-            uint32_t enqueued_size = cq->elem_size? cq->elem_size : (sizeof(elem_size) + elem_size);
+            enqueue_size += cq->elem_size? 0 : sizeof(elem_size);
 
-            cq->back_idx = (cq->back_idx + enqueued_size) % cq->max_size;
+            cq->back_idx = (cq->back_idx + enqueue_size) % cq->max_size;
             cq->count++;
             ret = _spiffs_circular_queue_persist(cq);
         }

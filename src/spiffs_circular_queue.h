@@ -10,6 +10,7 @@
 #define SPIFFS_MAX_FILES_COUNT                    (3u)    ///< Maximum queue files that could open at the same time.
 #define SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE       (0u)    ///< Queue elem size upper limit. 0 if disabled
 #define SPIFFS_FILE_NAME_MAX_SIZE                 (32u)   ///< SPIFFS maximum allowable file name length
+#define CIRCULAR_QUEUE_DEFAULT_MAX_SIZE           (2048u) ///< Default queue max size in bytes
 
 #include <Arduino.h>
 
@@ -49,7 +50,7 @@ typedef struct _circular_queue_t {
  * 
  */ 
 #define spiffs_circular_queue_foreach_dequeue(cq, elem, elem_size)      \
-    while (spiffs_circular_queue_dequeue(cq, elem, &elem_size))         \
+    while (spiffs_circular_queue_dequeue(cq, elem, elem_size))         \
 
 
 #ifdef __cplusplus
@@ -117,7 +118,7 @@ uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, void *elem = NULL, u
 uint8_t spiffs_circular_queue_is_empty(const circular_queue_t *cq);
 
 /**
- *	Returns the current queue pure data size.
+ *	Returns the current queue net data size.
  *
  *  This function is useful when you need to know how much pure data
  *  you still need to process/send. It does not account nodes sizes
