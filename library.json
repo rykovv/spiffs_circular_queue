@@ -1,6 +1,6 @@
 {
     "name": "spiffs_circular_queue",
-    "version": "1.1",
+    "version": "1.2",
     "description": "ESP-IDF and PlatformIO compatible library for a circular queue or circular FIFO buffer over SPIFFS.",
     "keywords": "esp-idf, fifo, spiffs, esp32, esp8266, espressif, arduino",
     "repository":
