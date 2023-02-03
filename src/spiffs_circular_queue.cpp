@@ -30,8 +30,6 @@ static uint8_t _read_medium(const circular_queue_t *cq, void *data, uint16_t *da
 static uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq);
 
 static inline uint32_t _spiffs_circular_queue_full_size(const circular_queue_t *cq);
-static inline uint8_t _get_bit(const uint8_t flags, const uint8_t bit);
-static inline void _set_bit(uint8_t *flags, const uint8_t bit, const uint8_t value);
 static inline uint8_t _circular_queue_get_data_offset(const circular_queue_t *cq);
 
 uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
@@ -373,18 +371,6 @@ static uint8_t _read_medium(const circular_queue_t *cq, void *data, uint16_t *da
 
 static inline uint32_t _spiffs_circular_queue_full_size(const circular_queue_t *cq) {
     return (cq->max_size + _circular_queue_get_data_offset(cq));
-}
-
-static inline uint8_t _get_bit(const uint8_t flags, const uint8_t bit) {
-    return ((flags & (1 << bit)) >> bit);
-}
-
-static inline void _set_bit(uint8_t *flags, const uint8_t bit, const uint8_t value) {
-    if (value) {
-        *flags |= (1 << bit);
-    } else {
-        *flags &= ~(1 << bit);
-    }
 }
 
 static inline uint8_t _circular_queue_get_data_offset(const circular_queue_t *cq) {
