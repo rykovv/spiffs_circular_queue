@@ -193,7 +193,7 @@ uint16_t spiffs_circular_queue_get_count(const circular_queue_t *cq);
  *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
  *
- *	@return					queue nodes count
+ *	@return					SPIFFS queue file size in bytes
  */
 uint32_t spiffs_circular_queue_get_file_size(const circular_queue_t *cq);
 
