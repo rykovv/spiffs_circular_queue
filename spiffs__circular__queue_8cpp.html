@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SPIFFS Circular Queue: src/spiffs_circular_queue.cpp File Reference</title>
+<title>SPIFFS Circular Queue: D:/vscode/circular_queue_esp32/src/spiffs_circular_queue/src/spiffs_circular_queue.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,9 +21,9 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">SPIFFS Circular Queue<span id="projectnumber">&#160;1.1</span>
+   <div id="projectname">SPIFFS Circular Queue<span id="projectnumber">&#160;1.2</span>
    </div>
-   <div id="projectbrief">The library provides functionality of a Circular Queue or Circular FIFO stored in SPIFFS. It was initially design for ESP32 microcontroller to store RAM content (network packets and other variables) when go to deep sleep modes.</div>
+   <div id="projectbrief">SPIFFS Circular Queue Doxigen-Generated Documentation</div>
   </td>
  </tr>
  </tbody>
@@ -63,7 +63,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_cc3e33966879c86d48abddb772306499.html">circular_queue_esp32</a></li><li class="navelem"><a class="el" href="dir_59230a3c2f8cda0a505a128bbd9d01f1.html">src</a></li><li class="navelem"><a class="el" href="dir_f284938674930c35494b7e9ab28981cd.html">spiffs_circular_queue</a></li><li class="navelem"><a class="el" href="dir_1d171e37c465db90c67498d1e8e72c8e.html">src</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -77,89 +77,60 @@ $(function() {
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:add9426d2d9eea3ba48a507225eec1871"><td class="memItemLeft" align="right" valign="top"><a id="add9426d2d9eea3ba48a507225eec1871" name="add9426d2d9eea3ba48a507225eec1871"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>SPIFFS_CIRCULAR_QUEUE_HEAD_FRONT</b>&#160;&#160;&#160;(0)</td></tr>
-<tr class="memdesc:add9426d2d9eea3ba48a507225eec1871"><td class="mdescLeft">&#160;</td><td class="mdescRight">Front index file offset. <br /></td></tr>
-<tr class="separator:add9426d2d9eea3ba48a507225eec1871"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0882db8d80077a6e008e28468abb1513"><td class="memItemLeft" align="right" valign="top"><a id="a0882db8d80077a6e008e28468abb1513" name="a0882db8d80077a6e008e28468abb1513"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>SPIFFS_CIRCULAR_QUEUE_HEAD_BACK</b>&#160;&#160;&#160;(sizeof(uint32_t))</td></tr>
-<tr class="memdesc:a0882db8d80077a6e008e28468abb1513"><td class="mdescLeft">&#160;</td><td class="mdescRight">Back index file offset. <br /></td></tr>
-<tr class="separator:a0882db8d80077a6e008e28468abb1513"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bd8ebb609cfe597d94957515619df31"><td class="memItemLeft" align="right" valign="top"><a id="a7bd8ebb609cfe597d94957515619df31" name="a7bd8ebb609cfe597d94957515619df31"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>SPIFFS_CIRCULAR_QUEUE_HEAD_COUNT</b>&#160;&#160;&#160;(sizeof(uint16_t))</td></tr>
-<tr class="memdesc:a7bd8ebb609cfe597d94957515619df31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Elements count file offset. <br /></td></tr>
-<tr class="separator:a7bd8ebb609cfe597d94957515619df31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac48ef62aabf78fda664822e4975fb6e7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#ac48ef62aabf78fda664822e4975fb6e7">SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET</a></td></tr>
-<tr class="memdesc:ac48ef62aabf78fda664822e4975fb6e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data location file offset.  <a href="spiffs__circular__queue_8cpp.html#ac48ef62aabf78fda664822e4975fb6e7">More...</a><br /></td></tr>
-<tr class="separator:ac48ef62aabf78fda664822e4975fb6e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea04801d4547e3e7189d0a696eb8244b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#aea04801d4547e3e7189d0a696eb8244b">SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE</a></td></tr>
-<tr class="memdesc:aea04801d4547e3e7189d0a696eb8244b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max data size.  <a href="spiffs__circular__queue_8cpp.html#aea04801d4547e3e7189d0a696eb8244b">More...</a><br /></td></tr>
-<tr class="separator:aea04801d4547e3e7189d0a696eb8244b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33c5ee7b5625e75f6d022a3d3dd7b3ee"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a33c5ee7b5625e75f6d022a3d3dd7b3ee">CIRCULAR_QUEUE_DATA_OFFSET_FIXED</a></td></tr>
+<tr class="memdesc:a33c5ee7b5625e75f6d022a3d3dd7b3ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data location file offset (fixed part)  <a href="spiffs__circular__queue_8cpp.html#a33c5ee7b5625e75f6d022a3d3dd7b3ee">More...</a><br /></td></tr>
+<tr class="separator:a33c5ee7b5625e75f6d022a3d3dd7b3ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f704889bcf98bcfbb4b9aa2fe7e97ec"><td class="memItemLeft" align="right" valign="top"><a id="a3f704889bcf98bcfbb4b9aa2fe7e97ec" name="a3f704889bcf98bcfbb4b9aa2fe7e97ec"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SPIFFS_CIRCULAR_QUEUE_PERSIST_SIZE</b>&#160;&#160;&#160;(sizeof(uint32_t)*2 + sizeof(uint16_t))</td></tr>
+<tr class="memdesc:a3f704889bcf98bcfbb4b9aa2fe7e97ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persist bytes. <br /></td></tr>
+<tr class="separator:a3f704889bcf98bcfbb4b9aa2fe7e97ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a78e9ecccb42043b2d5aecc5428be7eba"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a78e9ecccb42043b2d5aecc5428be7eba">spiffs_circular_queue_init</a> (<a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
+<tr class="memitem:a78e9ecccb42043b2d5aecc5428be7eba"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a78e9ecccb42043b2d5aecc5428be7eba">spiffs_circular_queue_init</a> (<a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
 <tr class="separator:a78e9ecccb42043b2d5aecc5428be7eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbab420730de60cce6ee5c0d276113bb"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#afbab420730de60cce6ee5c0d276113bb">spiffs_circular_queue_front</a> (const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq, uint8_t *elem, uint16_t *elem_size)</td></tr>
-<tr class="separator:afbab420730de60cce6ee5c0d276113bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaac64faa64d12a6432905b6c5429d13a"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#aaac64faa64d12a6432905b6c5429d13a">spiffs_circular_queue_enqueue</a> (<a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq, const uint8_t *elem, const uint16_t elem_size)</td></tr>
-<tr class="separator:aaac64faa64d12a6432905b6c5429d13a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6582bf7ede71c61337834d0b36f00f63"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a6582bf7ede71c61337834d0b36f00f63">spiffs_circular_queue_dequeue</a> (<a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq, uint8_t *elem, uint16_t *elem_size)</td></tr>
-<tr class="separator:a6582bf7ede71c61337834d0b36f00f63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f2edc2a8e438e49b82cfacf3549bc06"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a5f2edc2a8e438e49b82cfacf3549bc06">spiffs_circular_queue_is_empty</a> (const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
+<tr class="memitem:a49de65779c18d4285b9046be60b64e5e"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a49de65779c18d4285b9046be60b64e5e">spiffs_circular_queue_front</a> (const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq, void *elem, uint16_t *elem_size)</td></tr>
+<tr class="separator:a49de65779c18d4285b9046be60b64e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bcb70359583762926caa9f20db10bee"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a8bcb70359583762926caa9f20db10bee">spiffs_circular_queue_enqueue</a> (<a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq, const void *elem, const uint16_t elem_size)</td></tr>
+<tr class="separator:a8bcb70359583762926caa9f20db10bee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f9dce7e15524ed10992ab39b59b87b0"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a5f9dce7e15524ed10992ab39b59b87b0">spiffs_circular_queue_dequeue</a> (<a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq, void *elem, uint16_t *elem_size)</td></tr>
+<tr class="separator:a5f9dce7e15524ed10992ab39b59b87b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f2edc2a8e438e49b82cfacf3549bc06"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a5f2edc2a8e438e49b82cfacf3549bc06">spiffs_circular_queue_is_empty</a> (const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
 <tr class="separator:a5f2edc2a8e438e49b82cfacf3549bc06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acaa4299177b4e6c9e7dd2177f3312f39"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#acaa4299177b4e6c9e7dd2177f3312f39">spiffs_circular_queue_size</a> (const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
+<tr class="memitem:acaa4299177b4e6c9e7dd2177f3312f39"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#acaa4299177b4e6c9e7dd2177f3312f39">spiffs_circular_queue_size</a> (const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
 <tr class="separator:acaa4299177b4e6c9e7dd2177f3312f39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a395811a4773754f3e104275c2ddb21d7"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a395811a4773754f3e104275c2ddb21d7">spiffs_circular_queue_available_space</a> (const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
+<tr class="memitem:a395811a4773754f3e104275c2ddb21d7"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a395811a4773754f3e104275c2ddb21d7">spiffs_circular_queue_available_space</a> (const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
 <tr class="separator:a395811a4773754f3e104275c2ddb21d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92d3d8cb47b23a3412c2c7b56da83224"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a92d3d8cb47b23a3412c2c7b56da83224">spiffs_circular_queue_get_front_idx</a> (const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
+<tr class="memitem:a92d3d8cb47b23a3412c2c7b56da83224"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a92d3d8cb47b23a3412c2c7b56da83224">spiffs_circular_queue_get_front_idx</a> (const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
 <tr class="separator:a92d3d8cb47b23a3412c2c7b56da83224"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a809ceb8a0e18fd4093885c9ab5cef173"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a809ceb8a0e18fd4093885c9ab5cef173">spiffs_circular_queue_get_back_idx</a> (const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
+<tr class="memitem:a809ceb8a0e18fd4093885c9ab5cef173"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a809ceb8a0e18fd4093885c9ab5cef173">spiffs_circular_queue_get_back_idx</a> (const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
 <tr class="separator:a809ceb8a0e18fd4093885c9ab5cef173"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0006c7e702d03f3c1567e89d1f021f67"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a0006c7e702d03f3c1567e89d1f021f67">spiffs_circular_queue_get_count</a> (const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
+<tr class="memitem:a0006c7e702d03f3c1567e89d1f021f67"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a0006c7e702d03f3c1567e89d1f021f67">spiffs_circular_queue_get_count</a> (const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
 <tr class="separator:a0006c7e702d03f3c1567e89d1f021f67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebe05c4ca0342f0c6116591dc5c0f1a2"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#aebe05c4ca0342f0c6116591dc5c0f1a2">spiffs_circular_queue_get_file_size</a> (const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
+<tr class="memitem:aebe05c4ca0342f0c6116591dc5c0f1a2"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#aebe05c4ca0342f0c6116591dc5c0f1a2">spiffs_circular_queue_get_file_size</a> (const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq)</td></tr>
 <tr class="separator:aebe05c4ca0342f0c6116591dc5c0f1a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94d26345c5fd510f5cb3d2451a8c82d5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a94d26345c5fd510f5cb3d2451a8c82d5">spiffs_circular_queue_free</a> (<a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *cq, const uint8_t unmount_spiffs)</td></tr>
+<tr class="memitem:a94d26345c5fd510f5cb3d2451a8c82d5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="spiffs__circular__queue_8cpp.html#a94d26345c5fd510f5cb3d2451a8c82d5">spiffs_circular_queue_free</a> (<a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *cq, const uint8_t unmount_spiffs)</td></tr>
 <tr class="separator:a94d26345c5fd510f5cb3d2451a8c82d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >SPIFFS Circular Queue (aka FIFO) implementation file. </p><dl class="section author"><dt>Author</dt><dd>rykovv </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="ac48ef62aabf78fda664822e4975fb6e7" name="ac48ef62aabf78fda664822e4975fb6e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac48ef62aabf78fda664822e4975fb6e7">&#9670;&nbsp;</a></span>SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET</h2>
+<a id="a33c5ee7b5625e75f6d022a3d3dd7b3ee" name="a33c5ee7b5625e75f6d022a3d3dd7b3ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33c5ee7b5625e75f6d022a3d3dd7b3ee">&#9670;&nbsp;</a></span>CIRCULAR_QUEUE_DATA_OFFSET_FIXED</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET</td>
+          <td class="memname">#define CIRCULAR_QUEUE_DATA_OFFSET_FIXED</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">                                             (<span class="keyword">sizeof</span>(uint32_t)*2 + \</div>
-<div class="line">                                             <span class="keyword">sizeof</span>(uint16_t))</div>
+<b>Value:</b><div class="fragment"><div class="line">                                            (<span class="keyword">sizeof</span>(uint32_t)*3 + \</div>
+<div class="line">                                            <span class="keyword">sizeof</span>(uint16_t)    + \</div>
+<div class="line">                                            sizeof(uint8_t))</div>
 </div><!-- fragment -->
-<p>Data location file offset. </p>
-
-</div>
-</div>
-<a id="aea04801d4547e3e7189d0a696eb8244b" name="aea04801d4547e3e7189d0a696eb8244b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea04801d4547e3e7189d0a696eb8244b">&#9670;&nbsp;</a></span>SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define SPIFFS_CIRCULAR_QUEUE_MAX_DATA_SIZE</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">                                            (<a class="code hl_define" href="spiffs__circular__queue_8h.html#aebe453f75e404890f154ca1fa86a2d7b">SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE</a> - \</div>
-<div class="line">                                            SPIFFS_CIRCULAR_QUEUE_DATA_OFFSET)</div>
-<div class="ttc" id="aspiffs__circular__queue_8h_html_aebe453f75e404890f154ca1fa86a2d7b"><div class="ttname"><a href="spiffs__circular__queue_8h.html#aebe453f75e404890f154ca1fa86a2d7b">SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE</a></div><div class="ttdeci">#define SPIFFS_CIRCULAR_QUEUE_FILE_MAX_SIZE</div><div class="ttdoc">Maximum file size for storing data, in bytes. Set your limit.</div><div class="ttdef"><b>Definition:</b> spiffs_circular_queue.h:11</div></div>
-</div><!-- fragment -->
-<p>Max data size. </p>
+<p>Data location file offset (fixed part) </p>
 
 </div>
 </div>
@@ -173,16 +144,17 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint32_t spiffs_circular_queue_available_space </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p >Returns queue available space in bytes.</p>
+<p >Allows to return a real estimate for the next elem to be enqueued. Caution: not upper limited by the SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE. Check SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE value to see max elem size you can enqueue if enabled.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct</td></tr>
   </table>
   </dd>
 </dl>
@@ -190,8 +162,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6582bf7ede71c61337834d0b36f00f63" name="a6582bf7ede71c61337834d0b36f00f63"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6582bf7ede71c61337834d0b36f00f63">&#9670;&nbsp;</a></span>spiffs_circular_queue_dequeue()</h2>
+<a id="a5f9dce7e15524ed10992ab39b59b87b0" name="a5f9dce7e15524ed10992ab39b59b87b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f9dce7e15524ed10992ab39b59b87b0">&#9670;&nbsp;</a></span>spiffs_circular_queue_dequeue()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,13 +171,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint8_t spiffs_circular_queue_dequeue </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramtype">void *&#160;</td>
           <td class="paramname"><em>elem</em> = <code>NULL</code>, </td>
         </tr>
         <tr>
@@ -221,12 +193,12 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Pops out the first element of the queue. When elem and elem_size are valid pointers, front element is placed in them and then it pops out.</p>
+<p >Pops out the first elem of the queue. When elem and elem_size are valid pointers, front elem is placed in them and then it pops out.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">elem</td><td>Pointer to a queue element buffer </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">elem_size</td><td>A queue element size</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">elem</td><td>Pointer to a queue elem buffer </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">elem_size</td><td>A queue elem size</td></tr>
   </table>
   </dd>
 </dl>
@@ -234,8 +206,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aaac64faa64d12a6432905b6c5429d13a" name="aaac64faa64d12a6432905b6c5429d13a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaac64faa64d12a6432905b6c5429d13a">&#9670;&nbsp;</a></span>spiffs_circular_queue_enqueue()</h2>
+<a id="a8bcb70359583762926caa9f20db10bee" name="a8bcb70359583762926caa9f20db10bee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8bcb70359583762926caa9f20db10bee">&#9670;&nbsp;</a></span>spiffs_circular_queue_enqueue()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,20 +215,20 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint8_t spiffs_circular_queue_enqueue </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const uint8_t *&#160;</td>
-          <td class="paramname"><em>elem</em>, </td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>elem</em> = <code>NULL</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const uint16_t&#160;</td>
-          <td class="paramname"><em>elem_size</em>&#160;</td>
+          <td class="paramname"><em>elem_size</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -265,12 +237,13 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Enqueues elem of elem_size size to the front of the queue.</p>
+<p >Enqueues elem of elem_size size to the front of the queue if there is enough room in the queue.</p>
+<p >Be responsible for passing elem buffer of SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE size or less if SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE is enabled</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">elem</td><td>Pointer to a queue element buffer </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">elem_size</td><td>A queue element size</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">elem</td><td>Pointer to a queue elem buffer </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">elem_size</td><td>A queue elem size</td></tr>
   </table>
   </dd>
 </dl>
@@ -287,7 +260,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint8_t spiffs_circular_queue_free </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em>, </td>
         </tr>
         <tr>
@@ -306,7 +279,7 @@ Functions</h2></td></tr>
 <p >Frees resourses allocated for the queue and closes the SPIFFS.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">unmount_spiffs</td><td>Unmount SPIFFS on free flag</td></tr>
   </table>
   </dd>
@@ -315,8 +288,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="afbab420730de60cce6ee5c0d276113bb" name="afbab420730de60cce6ee5c0d276113bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afbab420730de60cce6ee5c0d276113bb">&#9670;&nbsp;</a></span>spiffs_circular_queue_front()</h2>
+<a id="a49de65779c18d4285b9046be60b64e5e" name="a49de65779c18d4285b9046be60b64e5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49de65779c18d4285b9046be60b64e5e">&#9670;&nbsp;</a></span>spiffs_circular_queue_front()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -324,20 +297,20 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint8_t spiffs_circular_queue_front </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>elem</em>, </td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>elem</em> = <code>NULL</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint16_t *&#160;</td>
-          <td class="paramname"><em>elem_size</em>&#160;</td>
+          <td class="paramname"><em>elem_size</em> = <code>NULL</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -346,12 +319,12 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Copies front queue element of elem_size size to the elem.</p>
+<p >Places front queue elem of elem_size size to the elem.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">elem</td><td>Pointer to a queue element buffer </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">elem_size</td><td>Pointer to a queue element size </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">elem</td><td>Pointer to a queue elem buffer </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">elem_size</td><td>Pointer to a queue elem size. </td></tr>
   </table>
   </dd>
 </dl>
@@ -368,7 +341,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint32_t spiffs_circular_queue_get_back_idx </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em></td><td>)</td>
           <td></td>
         </tr>
@@ -377,7 +350,7 @@ Functions</h2></td></tr>
 <p >Gets the back index of the queue</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct</td></tr>
   </table>
   </dd>
 </dl>
@@ -394,7 +367,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint16_t spiffs_circular_queue_get_count </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em></td><td>)</td>
           <td></td>
         </tr>
@@ -403,7 +376,7 @@ Functions</h2></td></tr>
 <p >Gets the queue nodes count</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct</td></tr>
   </table>
   </dd>
 </dl>
@@ -420,7 +393,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint32_t spiffs_circular_queue_get_file_size </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em></td><td>)</td>
           <td></td>
         </tr>
@@ -429,11 +402,11 @@ Functions</h2></td></tr>
 <p >Gets the queue SPIFFS file footprint in bytes</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>queue nodes count </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>SPIFFS queue file size in bytes </dd></dl>
 
 </div>
 </div>
@@ -446,7 +419,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint32_t spiffs_circular_queue_get_front_idx </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em></td><td>)</td>
           <td></td>
         </tr>
@@ -455,7 +428,7 @@ Functions</h2></td></tr>
 <p >Gets the front index of the queue</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct</td></tr>
   </table>
   </dd>
 </dl>
@@ -472,16 +445,17 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint8_t spiffs_circular_queue_init </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p >Initializes the library creating/reading a spiffs data file. Sets current front, back, and count queue indices.</p>
+<p >For non-volatile storages the initialization and re-initialization depend on the written queue data. The library will set its indices and count variables to what is encounted on the medium or set to zeros if found none. If you modify cq struct variables outside of the library, that will be lost if _persist function will not be called. Initialization will result in failure only on null cq struct pointer, failure to mount SPIFFS, or failure to write queue data file on SPIFFS.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct</td></tr>
   </table>
   </dd>
 </dl>
@@ -498,7 +472,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint8_t spiffs_circular_queue_is_empty </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em></td><td>)</td>
           <td></td>
         </tr>
@@ -507,7 +481,7 @@ Functions</h2></td></tr>
 <p >Checks whether the queue is empty or not.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct</td></tr>
   </table>
   </dd>
 </dl>
@@ -524,17 +498,17 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">uint32_t spiffs_circular_queue_size </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct__circular__queue__t.html">circular_queue_t</a> *&#160;</td>
           <td class="paramname"><em>cq</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Returns the current queue pure data size.</p>
+<p >Returns the current queue net data size.</p>
 <p >This function is useful when you need to know how much pure data you still need to process/send. It does not account nodes sizes stored at head of each node.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the <a class="el" href="structcircular__queue__t.html">circular_queue_t</a> struct</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cq</td><td>Pointer to the circular_queue_t struct</td></tr>
   </table>
   </dd>
 </dl>

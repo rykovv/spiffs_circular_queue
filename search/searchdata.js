@@ -1,11 +1,13 @@
 var indexSectionsWithContent =
 {
-  0: "bcfs",
-  1: "c",
+  0: "_bcefms",
+  1: "_c",
   2: "s",
   3: "s",
-  4: "bcf",
-  5: "s"
+  4: "bcefm",
+  5: "_",
+  6: "c",
+  7: "cs"
 };
 
 var indexSectionNames =
@@ -15,7 +17,9 @@ var indexSectionNames =
   2: "files",
   3: "functions",
   4: "variables",
-  5: "defines"
+  5: "typedefs",
+  6: "enums",
+  7: "defines"
 };
 
 var indexSectionLabels =
@@ -25,6 +29,8 @@ var indexSectionLabels =
   2: "Files",
   3: "Functions",
   4: "Variables",
-  5: "Macros"
+  5: "Typedefs",
+  6: "Enumerations",
+  7: "Macros"
 };
 
