@@ -43,7 +43,7 @@ typedef struct _circular_queue_t {
 
     circular_queue_flags_t flags;   ///< Flags for queue type, fixed elem size, etc
 
-    // Function pointers to get oo flavour 
+    // Function pointers to get oo flavor 
     uint8_t (*front)(const circular_queue_t*, void*, uint16_t*);
     uint8_t (*enqueue)(circular_queue_t*, const void*, const uint16_t);
     uint8_t (*dequeue)(circular_queue_t*, void*, uint16_t*);

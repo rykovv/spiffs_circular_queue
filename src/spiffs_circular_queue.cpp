@@ -123,8 +123,7 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const void *elem, co
     uint32_t enqueue_size = cq->elem_size? cq->elem_size : elem_size;
 
     if (enqueue_size && spiffs_circular_queue_available_space(cq) >= enqueue_size &&
-        (!SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE ||
-        (SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE && enqueue_size < SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE))
+        (!SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE || enqueue_size <= SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE)
     ) {
         if (_write_medium(cq, elem, elem_size)) {
             enqueue_size += cq->elem_size? 0 : sizeof(elem_size);
