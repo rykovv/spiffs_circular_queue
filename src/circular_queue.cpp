@@ -1,14 +1,17 @@
 /**
-* @file spiffs_circular_queue.cpp
-* SPIFFS Circular Queue (aka FIFO) implementation file.
+* @file circular_queue.cpp
+* Circular Queue (aka FIFO) implementation file.
 * @author rykovv
 **/
 
-#include "spiffs_circular_queue.h"
+#include "circular_queue.h"
 
 #ifdef ESP32
+// SPIFFS-related
 #include "sys/stat.h"
 #include "esp_spiffs.h"
+// EEPROM-related
+#include "EEPROM.h"
 #else
 #error Library designed to work with ESP32 arch and x-tensa toolchain 
 #endif
@@ -32,10 +35,10 @@ static uint8_t _spiffs_circular_queue_persist(const circular_queue_t *cq);
 static inline uint32_t _spiffs_circular_queue_full_size(const circular_queue_t *cq);
 static inline uint8_t _circular_queue_get_data_offset(const circular_queue_t *cq);
 
-uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
+uint8_t circular_queue_init_spiffs(circular_queue_t *cq) {
     uint8_t ret = 1;
 
-    if (ret && !esp_spiffs_mounted(NULL)) {
+    if (!esp_spiffs_mounted(NULL)) {
         ret = _mount_spiffs();
     }
 
@@ -44,6 +47,85 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
         FILE *fd = NULL;
 
         // stat returns 0 upon succes (file exists) and -1 on failure (does not)
+        if (stat(cq->shared.spiffs.fn, &sb) < 0) {
+            if ((fd = fopen(cq->shared.spiffs.fn, "w"))) {
+
+                cq->front_idx = cq->back_idx = 0;
+                cq->count = 0;
+
+                // set fixed elem size flags bit
+                cq->flags.fields.fixed_elem_size = cq->elem_size > 0;
+                
+                // set default max size, if not specified
+                if (!cq->max_size) cq->max_size = CIRCULAR_QUEUE_DEFAULT_MAX_SIZE;
+
+                // set front and back indices in the file's head
+                uint8_t nwritten = fwrite(&(cq->front_idx), 1, sizeof(cq->front_idx), fd);
+                nwritten += fwrite(&(cq->back_idx), 1, sizeof(cq->back_idx), fd);
+                nwritten += fwrite(&(cq->count), 1, sizeof(cq->count), fd);
+                nwritten += fwrite(&(cq->max_size), 1, sizeof(cq->max_size), fd);
+                nwritten += fwrite(&(cq->flags.value), 1, sizeof(cq->flags.value), fd);
+                if (cq->elem_size) { // if fixed elem size
+                    nwritten += fwrite(&(cq->elem_size), 1, sizeof(cq->elem_size), fd);
+                }
+                
+                ret = nwritten == _circular_queue_get_data_offset(cq);
+                fclose(fd);
+            } else {
+                ret = 0;
+            }
+        } else {
+            if ((fd = fopen(cq->shared.spiffs.fn, "r+b"))) {
+                // read front and back indices from the file's head
+                uint8_t nread = fread(&(cq->front_idx), 1, sizeof(cq->front_idx), fd);
+                nread += fread(&(cq->back_idx), 1, sizeof(cq->back_idx), fd);
+                nread += fread(&(cq->count), 1, sizeof(cq->count), fd);
+                nread += fread(&(cq->max_size), 1, sizeof(cq->max_size), fd);
+                nread += fread(&(cq->flags.value), 1, sizeof(cq->flags.value), fd);
+                if (cq->flags.fields.fixed_elem_size) {
+                    nread += fread(&(cq->elem_size), 1, sizeof(cq->elem_size), fd);
+                }
+
+                ret = nread == _circular_queue_get_data_offset(cq);
+                fclose(fd);
+            } else {
+                ret = 0;
+            }
+        }
+    }
+
+    if (ret) {
+        cq->front = circular_queue_front;
+        cq->enqueue = circular_queue_enqueue;
+        cq->dequeue = circular_queue_dequeue;
+        cq->is_empty = circular_queue_is_empty;
+        cq->size = circular_queue_size;
+        cq->available_space = circular_queue_available_space;
+        cq->get_front_idx = circular_queue_get_front_idx;
+        cq->get_back_idx = circular_queue_get_back_idx;
+        cq->get_count = circular_queue_get_count;
+        cq->get_file_size = circular_queue_get_spiffs_file_size;
+        cq->free = circular_queue_free;
+    }
+
+    return ret;
+}
+
+uint8_t circular_queue_init_eeprom(circular_queue_t *cq) {
+    uint8_t ret = 1;
+
+    // check if eeprom partition exists
+    const esp_partition_t *peeprom = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_ANY, cq->shared.eeprom.label);
+    if (peeprom) {
+        cq->shared.eeprom.self = EEPROMClass();
+        ret = cq->shared.eeprom.self.begin(peeprom->size);
+    } else {
+        ret = 0;
+    }
+
+    if (ret) {
+        // curate strategy to figure out if there's an existing queue stored in the partition.
+
         if (stat(cq->fn, &sb) < 0) {
             if ((fd = fopen(cq->fn, "w"))) {
 
@@ -108,7 +190,7 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq) {
     return ret;
 }
 
-uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, void *elem, uint16_t *elem_size) {
+uint8_t circular_queue_front(const circular_queue_t *cq, void *elem, uint16_t *elem_size) {
     uint8_t ret = 0;
 
     if (!spiffs_circular_queue_is_empty(cq)) {
@@ -118,7 +200,7 @@ uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, void *elem, uint
     return ret;
 }
 
-uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const void *elem, const uint16_t elem_size) {
+uint8_t circular_queue_enqueue(circular_queue_t *cq, const void *elem, const uint16_t elem_size) {
     uint8_t ret = 0;
     uint32_t enqueue_size = cq->elem_size? cq->elem_size : elem_size;
 
@@ -137,7 +219,7 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const void *elem, co
     return ret;
 }
 
-uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, void *elem, uint16_t *elem_size) {
+uint8_t circular_queue_dequeue(circular_queue_t *cq, void *elem, uint16_t *elem_size) {
     uint8_t ret = 0;
 
     if (!spiffs_circular_queue_is_empty(cq)) {
@@ -153,11 +235,11 @@ uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, void *elem, uint16_t
     return ret;
 }
 
-uint8_t spiffs_circular_queue_is_empty(const circular_queue_t *cq) {
+uint8_t circular_queue_is_empty(const circular_queue_t *cq) {
     return !cq->count;
 }
 
-uint32_t spiffs_circular_queue_size(const circular_queue_t *cq) {
+uint32_t circular_queue_size(const circular_queue_t *cq) {
     uint32_t qsize = 0;
 
     uint32_t elem_size_total = cq->elem_size? 0 : cq->count*sizeof(uint16_t);
@@ -173,7 +255,7 @@ uint32_t spiffs_circular_queue_size(const circular_queue_t *cq) {
     return qsize;
 }
 
-uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq) {
+uint32_t circular_queue_available_space(const circular_queue_t *cq) {
     uint32_t elem_size_total = 0;
     uint16_t next_elem_size = 0;
 
@@ -183,30 +265,30 @@ uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq) {
     }
 
     uint32_t gross_available_space = cq->max_size - 
-                                (spiffs_circular_queue_size(cq) + elem_size_total);
+                                (circular_queue_size(cq) + elem_size_total);
 
     return gross_available_space <= next_elem_size ? 0 : gross_available_space - next_elem_size;
 }
 
-uint32_t spiffs_circular_queue_get_front_idx(const circular_queue_t *cq) {
+uint32_t circular_queue_get_front_idx(const circular_queue_t *cq) {
     return cq->front_idx;
 }
 
-uint32_t spiffs_circular_queue_get_back_idx(const circular_queue_t *cq) {
+uint32_t circular_queue_get_back_idx(const circular_queue_t *cq) {
     return cq->back_idx;
 }
 
-uint16_t spiffs_circular_queue_get_count(const circular_queue_t *cq) {
+uint16_t circular_queue_get_count(const circular_queue_t *cq) {
     return cq->count;
 }
 
-uint32_t spiffs_circular_queue_get_file_size(const circular_queue_t *cq) {
+uint32_t circular_queue_get_spiffs_file_size(const circular_queue_t *cq) {
     struct stat sb;
 
     return stat(cq->fn, &sb) < 0 ? 0 : sb.st_size;
 }
 
-uint8_t spiffs_circular_queue_free(circular_queue_t *cq, const uint8_t unmount_spiffs) {
+uint8_t circular_queue_free(circular_queue_t *cq, const uint8_t unmount_spiffs) {
     uint8_t ret = 0;
 
     if (!remove(cq->fn)) {

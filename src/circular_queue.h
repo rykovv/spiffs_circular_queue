@@ -1,15 +1,15 @@
 /**
-* @file spiffs_circular_queue.h
-* SPIFFS Circular Queue (aka FIFO) header file.
+* @file circular_queue.h
+* Circular Queue (aka FIFO) header file.
 * @author rykovv
 **/
 
-#ifndef __SPIFFS_CIRCULAR_QUEUE__H__
-#define __SPIFFS_CIRCULAR_QUEUE__H__
+#ifndef __CIRCULAR_QUEUE__H__
+#define __CIRCULAR_QUEUE__H__
 
 #define SPIFFS_MAX_FILES_COUNT                    (3u)    ///< Maximum queue files that could open at the same time.
-#define SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE       (0u)    ///< Queue elem size upper limit. 0 if disabled
 #define SPIFFS_FILE_NAME_MAX_SIZE                 (32u)   ///< SPIFFS maximum allowable file name length
+#define CIRCULAR_QUEUE_MAX_ELEM_SIZE              (0u)    ///< Queue elem size upper limit. 0 if disabled
 #define CIRCULAR_QUEUE_DEFAULT_MAX_SIZE           (2048u) ///< Default queue max size in bytes
 
 #include <Arduino.h>
@@ -19,6 +19,7 @@ typedef struct _circular_queue_t circular_queue_t;
 /// Queue types enum, it will go populating with the development of the project
 typedef enum {
     CIRCULAR_QUEUE_TYPE_SPIFFS = 0,
+    CIRCULAR_QUEUE_TYPE_EEPROM
 } circular_queue_type_t;
 
 /// Union with a bitfield for easy access to queue flags
@@ -31,9 +32,20 @@ typedef union {
     unsigned char value;
 } circular_queue_flags_t;
 
+/// Union for an optimized memory use
+typedef union {
+    struct {
+        char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS. Mandatory prefix "/spiffs/"
+    } spiffs;
+    struct {
+        EEPROMClass self;                   ///< Instance of EEPROM class
+        uint32_t offset;                    ///< EEPROM partition data offset
+        char label[17];                     ///< EEPROM ESP partition label. Check esp_partition_t struct for details.
+    } eeprom;
+} circular_queue_shared_conf_t;
+
 /// Main queue struct
 typedef struct _circular_queue_t {
-    char fn[SPIFFS_FILE_NAME_MAX_SIZE]; ///< Path to store the queue data in SPIFFS. Mandatory prefix "/spiffs/"
     uint32_t front_idx;             ///< Queue front byte index
     uint32_t back_idx;              ///< Queue back byte index
     uint16_t count;                 ///< Queue nodes count
@@ -41,6 +53,7 @@ typedef struct _circular_queue_t {
     uint32_t max_size;              ///< Queue max data size in bytes
     uint16_t elem_size;             ///< Queue fixed elem size in bytes
 
+    circular_queue_shared_conf_t shared; ///< shared among different queue types config
     circular_queue_flags_t flags;   ///< Flags for queue type, fixed elem size, etc
 
     // Function pointers to get oo flavor 
@@ -66,8 +79,8 @@ typedef struct _circular_queue_t {
  *  @param[out] elem_size   Pointer to a queue elem size
  * 
  */ 
-#define spiffs_circular_queue_foreach_dequeue(cq, elem, elem_size)      \
-    while (spiffs_circular_queue_dequeue(cq, elem, elem_size))         \
+#define circular_queue_foreach_dequeue(cq, elem, elem_size)      \
+    while (circular_queue_dequeue(cq, elem, elem_size))         \
 
 
 #ifdef __cplusplus
@@ -75,20 +88,21 @@ extern "C" {
 #endif
 
 /**
- *	Initializes the library creating/reading a spiffs data file. Sets current front, back, and count queue indices.
+ *	Initializes the library creating/reading a spiffs data file or EEPROM. Sets current front, back, and 
+ *  count queue indices.
  *
  *  For non-volatile storages the initialization and re-initialization depend on the written queue data.
  *  The library will set its indices and count variables to what is encounted on the medium or set to zeros
  *  if found none. If you modify cq struct variables outside of the library, that will be lost if _persist 
  *  function will not be called.
  *  Initialization will result in failure only on null cq struct pointer, failure to mount SPIFFS, or failure
- *  to write queue data file on SPIFFS.
+ *  to write queue data file on SPIFFS. Accordingly on EEPROM queue type.
  *
  *	@param[in] cq 	        Pointer to the circular_queue_t struct
  *
  *	@return			        1 on success and 0 on fail
  */
-uint8_t spiffs_circular_queue_init(circular_queue_t *cq);
+uint8_t circular_queue_init(circular_queue_t *cq);
 
 /**
  *	Places front queue elem of elem_size size to the elem.
@@ -98,13 +112,13 @@ uint8_t spiffs_circular_queue_init(circular_queue_t *cq);
  *  @param[out] elem_size   Pointer to a queue elem size.
  *	@return					1 on success and 0 on fail
  */
-uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, void *elem = NULL, uint16_t *elem_size = NULL);
+uint8_t circular_queue_front(const circular_queue_t *cq, void *elem = NULL, uint16_t *elem_size = NULL);
 
 /**
  *	Enqueues elem of elem_size size to the front of the queue if there is enough room in the queue.
  *
- *  Be responsible for passing elem buffer of SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE size or less 
- *  if SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE is enabled
+ *  Be responsible for passing elem buffer of CIRCULAR_QUEUE_MAX_ELEM_SIZE size or less 
+ *  if CIRCULAR_QUEUE_MAX_ELEM_SIZE is enabled
  *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
  *	@param[out] elem 		Pointer to a queue elem buffer
@@ -112,10 +126,11 @@ uint8_t spiffs_circular_queue_front(const circular_queue_t *cq, void *elem = NUL
  *
  *	@return					1 on success and 0 on fail
  */
-uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const void *elem = NULL, const uint16_t elem_size = 0);
+uint8_t circular_queue_enqueue(circular_queue_t *cq, const void *elem = NULL, const uint16_t elem_size = 0);
 
 /**
- *	Pops out the first elem of the queue. When elem and elem_size are valid pointers, front elem is placed in them and then it pops out.
+ *	Pops out the first elem of the queue. When elem and elem_size are valid pointers, front elem 
+ *  is placed in them and then it pops out.
  *
  *  @param[in] cq 			Pointer to the circular_queue_t struct
  *  @param[out] elem        Pointer to a queue elem buffer
@@ -123,7 +138,7 @@ uint8_t spiffs_circular_queue_enqueue(circular_queue_t *cq, const void *elem = N
  * 
  *	@return					1 on success and 0 on fail
  */
-uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, void *elem = NULL, uint16_t *elem_size = NULL);
+uint8_t circular_queue_dequeue(circular_queue_t *cq, void *elem = NULL, uint16_t *elem_size = NULL);
 
 /**
  *	Checks whether the queue is empty or not.
@@ -132,7 +147,7 @@ uint8_t spiffs_circular_queue_dequeue(circular_queue_t *cq, void *elem = NULL, u
  *
  *	@return					1 when empty and 0 if not
  */
-uint8_t spiffs_circular_queue_is_empty(const circular_queue_t *cq);
+uint8_t circular_queue_is_empty(const circular_queue_t *cq);
 
 /**
  *	Returns the current queue net data size.
@@ -145,21 +160,21 @@ uint8_t spiffs_circular_queue_is_empty(const circular_queue_t *cq);
  *
  *	@return					queue size in bytes
  */
-uint32_t spiffs_circular_queue_size(const circular_queue_t *cq);
+uint32_t circular_queue_size(const circular_queue_t *cq);
 
 /**
  *	Returns queue available space in bytes.
  *
  *  Allows to return a real estimate for the next elem to be enqueued.
- *  Caution: not upper limited by the SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE.
- *  Check SPIFFS_CIRCULAR_QUEUE_MAX_ELEM_SIZE value to see max elem size 
+ *  Caution: not upper limited by the CIRCULAR_QUEUE_MAX_ELEM_SIZE.
+ *  Check CIRCULAR_QUEUE_MAX_ELEM_SIZE value to see max elem size 
  *  you can enqueue if enabled.
  *
  *	@param[in] cq 			Pointer to the circular_queue_t struct
  *
  *	@return					queue available space in bytes
  */
-uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq);
+uint32_t circular_queue_available_space(const circular_queue_t *cq);
 
 /**
  *	Gets the front index of the queue
@@ -168,7 +183,7 @@ uint32_t spiffs_circular_queue_available_space(const circular_queue_t *cq);
  *
  *	@return					front index
  */
-uint32_t spiffs_circular_queue_get_front_idx(const circular_queue_t *cq);
+uint32_t circular_queue_get_front_idx(const circular_queue_t *cq);
 
 /**
  *	Gets the back index of the queue
@@ -177,7 +192,7 @@ uint32_t spiffs_circular_queue_get_front_idx(const circular_queue_t *cq);
  *
  *	@return					back index
  */
-uint32_t spiffs_circular_queue_get_back_idx(const circular_queue_t *cq);
+uint32_t circular_queue_get_back_idx(const circular_queue_t *cq);
 
 /**
  *	Gets the queue nodes count
@@ -186,7 +201,7 @@ uint32_t spiffs_circular_queue_get_back_idx(const circular_queue_t *cq);
  *
  *	@return					queue nodes count
  */
-uint16_t spiffs_circular_queue_get_count(const circular_queue_t *cq);
+uint16_t circular_queue_get_count(const circular_queue_t *cq);
 
 /**
  *	Gets the queue SPIFFS file footprint in bytes
@@ -195,20 +210,20 @@ uint16_t spiffs_circular_queue_get_count(const circular_queue_t *cq);
  *
  *	@return					SPIFFS queue file size in bytes
  */
-uint32_t spiffs_circular_queue_get_file_size(const circular_queue_t *cq);
+uint32_t circular_queue_get_spiffs_file_size(const circular_queue_t *cq);
 
 /**
  *	Frees resourses allocated for the queue and closes the SPIFFS.
  *
  *	@param[in] cq 			    Pointer to the circular_queue_t struct
- *	@param[in] unmount_spiffs   Unmount SPIFFS on free flag
+ *	@param[in] unmount_spiffs   Unmount SPIFFS on free flag if SPIFFS type
  *
  *	@return					    1 on success and 0 on fail
  */
-uint8_t	spiffs_circular_queue_free(circular_queue_t *cq, const uint8_t unmount_spiffs = 1);
+uint8_t	circular_queue_free(circular_queue_t *cq, const uint8_t unmount_spiffs = 1);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __SPIFFS_CIRCULAR_QUEUE__H__
+#endif // __CIRCULAR_QUEUE__H__
